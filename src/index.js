@@ -2,7 +2,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 import App from './App'
 import store from './store/redux-store'
 import './index.css'
@@ -20,13 +20,13 @@ const theme = createTheme({
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <App />
         </ThemeProvider>
       </Provider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')
 )
