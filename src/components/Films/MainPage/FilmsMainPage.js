@@ -1,16 +1,17 @@
-import { Box, Container, TextField } from '@mui/material'
+import { Box, Container, TextField, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector, shallowEqual } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setPopularFilmsThunk } from '../../store/FilmReducer'
-import Loader from '../common/Loader'
-import FilmItem from './FilmItem'
+import { setPopularFilmsThunk, setFilmItemThunk } from '../../../store/FilmReducer'
+import Loader from '../../common/Loader'
+import FilmItem from '../FilmItem'
+import FilmSearch from '../FilmSearch/FilmSearch'
 
 const Films = (props) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const popularFilms = useSelector((state) => state.filmReducer.popularFilms)
+  const popularFilms = useSelector((state) => state.filmReducer.popularFilms, shallowEqual)
   const [fav, setFav] = useState(false)
 
   const addToFavorites = (e) => {
@@ -18,11 +19,14 @@ const Films = (props) => {
   }
 
   const onClickHandle = (id) => {
+    dispatch(setFilmItemThunk(id))
     return navigate(`/film/${id}`)
   }
 
   useEffect(() => {
-    dispatch(setPopularFilmsThunk())
+    if (popularFilms === null) {
+      dispatch(setPopularFilmsThunk())
+    }
   }, [])
 
   if (!popularFilms) {
@@ -32,6 +36,7 @@ const Films = (props) => {
   const filmsOutput = popularFilms.map((film) => {
     return (
       <FilmItem
+        key={film.id}
         id={film.id}
         poster={film.poster_path}
         title={film.title}
@@ -45,8 +50,11 @@ const Films = (props) => {
 
   return (
     <Container>
-      <Box>
-        <TextField id='outlined-basic' label='Search' variant='outlined' fullWidth sx={{ mb: '1.5rem' }} />
+      <FilmSearch />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
+        <Typography variant='h4' sx={{ color: 'white', fontFamily: 'Roboto' }}>
+          Popular now
+        </Typography>
       </Box>
       <Grid container spacing={4} justifyContent='center' alignItems='center' sx={{ mb: '1.5rem' }}>
         {filmsOutput}

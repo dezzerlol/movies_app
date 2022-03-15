@@ -84,8 +84,8 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1 }}>
-            <NavLink to='/' style={{textDecoration: 'none'}}>
-              <Typography variant='h6' noWrap component='div' >
+            <NavLink to='/' style={{ textDecoration: 'none', color: 'white' }}>
+              <Typography variant='h6' noWrap component='div'>
                 Movies
               </Typography>
             </NavLink>

@@ -1,8 +1,4 @@
-.app_wrapper{
-  
+.app_wrapper {
+  background-color: #222a31;
+  min-height: 100%;
 }
-
-.filmsContainer{
-    
-}
-

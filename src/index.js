@@ -5,14 +5,15 @@ import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import store from './store/redux-store'
+import './index.css'
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#61dafb',
+      main: '#F83646',
     },
     secondary: {
-      main: '#da61bf',
+      main: '#FFFFFF',
     },
   },
 })
