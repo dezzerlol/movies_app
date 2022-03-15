@@ -1,4 +1,4 @@
-import { Avatar, Card, CardContent, CardMedia, Chip, Container, Divider, Grid, Rating, Typography } from '@mui/material'
+import { Avatar, Card, CardContent, Chip, Container, Divider, Grid, Rating, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -63,10 +63,10 @@ const FilmPage = () => {
           </Typography>
           <Box sx={{ mb: 2 }}>
             <Typography component='legend' variant='body2'>
-              <b>Budget:</b> {filmItem.budget}$
+              <b>Budget:</b> {filmItem.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
             </Typography>
             <Typography component='legend' variant='body2'>
-              <b>Revenue:</b> {filmItem.revenue}$
+              <b>Revenue:</b> {filmItem.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
             </Typography>
           </Box>
           <Grid container spacing={1}>

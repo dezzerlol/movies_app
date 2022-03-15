@@ -4,7 +4,7 @@ import ScrollToTop from './components/common/ScrollToTop'
 import FilmPage from './components/Films/MainPage/FilmPage'
 import Films from './components/Films/MainPage/FilmsMainPage'
 import SearchResult from './components/Films/SearchResults/SearchResult'
-import SearchBar from './components/SearchBar/SearchBar'
+import SearchBar from './components/Header/SearchBar'
 
 const App = () => {
   return (

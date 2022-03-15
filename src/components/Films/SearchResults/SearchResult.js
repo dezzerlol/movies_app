@@ -24,7 +24,7 @@ const SearchResult = () => {
   })
 
   return (
-    <Container>
+    <Container sx={{ minHeight: '100vh' }}>
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
         <Typography variant='h4' sx={{ color: 'white', fontFamily: 'Roboto' }}>
           Search result

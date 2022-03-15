@@ -78,6 +78,7 @@ export default function PersistentDrawerLeft() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+
       <AppBar position='absolute' open={open}>
         <Toolbar>
           <IconButton color='inherit' aria-label='open drawer' onClick={handleDrawerOpen} edge='start' sx={{ mr: 2, ...(open && { display: 'none' }) }}>
@@ -93,6 +94,7 @@ export default function PersistentDrawerLeft() {
           <ThemeSwitch />
         </Toolbar>
       </AppBar>
+
       <Drawer
         sx={{
           width: drawerWidth,
@@ -100,23 +102,25 @@ export default function PersistentDrawerLeft() {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
+            color: 'white',
+            backgroundColor: '#1A1C20',
           },
         }}
         anchor='left'
         open={open}>
         <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>{theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}</IconButton>
+          <IconButton onClick={handleDrawerClose}>{theme.direction === 'ltr' ? <ChevronLeftIcon sx={{ color: 'white' }} /> : <ChevronRightIcon />}</IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider sx={{ backgroundColor: 'white' }} />
         <List>
-          {['Favorites', 'Top rated', 'Most popular', 'Upcoming', 'Latest'].map((text, index) => (
+          {['Popular now', 'Latest', 'Upcoming', 'Top rated', 'Favorites'].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon></ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
-        <Divider />
+        <Divider sx={{ backgroundColor: 'white' }} />
         <List>
           {['Movies', 'TV shows'].map((text, index) => (
             <ListItem button key={text}>

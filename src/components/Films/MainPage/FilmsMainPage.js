@@ -1,12 +1,12 @@
-import { Box, Container, TextField, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector, shallowEqual } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { setPopularFilmsThunk, setFilmItemThunk } from '../../../store/FilmReducer'
+import { setFilmItemThunk, setPopularFilmsThunk } from '../../../store/FilmReducer'
 import Loader from '../../common/Loader'
 import FilmItem from '../FilmItem'
-import FilmSearch from '../FilmSearch/FilmSearch'
+import FilmSearchField from '../FilmSearch/FilmSearchField'
 
 const Films = (props) => {
   const navigate = useNavigate()
@@ -50,7 +50,7 @@ const Films = (props) => {
 
   return (
     <Container>
-      <FilmSearch />
+      <FilmSearchField />
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
         <Typography variant='h4' sx={{ color: 'white', fontFamily: 'Roboto' }}>
           Popular now
