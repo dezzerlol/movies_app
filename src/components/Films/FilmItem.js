@@ -43,8 +43,8 @@ const FilmItem = (props) => {
           </Box>
         </CardContent>
         <CardActions sx={{ ml: 1 }}>
-          <Box sx={{ color: '#708898' }}>
-            <Typography variant='caption' component='h3'>
+          <Box>
+            <Typography variant='caption' component='h3' sx={{ color: '#708898' }}>
               Rating: {props.rating}
             </Typography>
           </Box>

@@ -2,7 +2,7 @@ import React from 'react'
 
 export const Loader = () => {
   return (
-    <div>
+    <div style={{ height: '100vh' }}>
       <img style={{ width: '80px', height: '60px', justifyContent: 'center', alignItems: 'center' }} src='https://betall.ru/local/img/25_1.gif' alt='loader' />
     </div>
   )

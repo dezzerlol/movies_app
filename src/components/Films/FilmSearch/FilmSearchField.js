@@ -33,6 +33,7 @@ const FilmSearchField = () => {
           label='Search'
           variant='outlined'
           fullWidth
+          focused
           sx={{ mb: '1.5rem', mr: 1, input: { color: 'white' } }}
           InputProps={{
             startAdornment: (
@@ -45,6 +46,7 @@ const FilmSearchField = () => {
             style: { color: '#F83646' },
           }}
         />
+
         <Button variant='contained' sx={{ height: '55px' }} type='submit'>
           Search
         </Button>

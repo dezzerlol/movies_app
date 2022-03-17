@@ -3,10 +3,10 @@ import { Box } from '@mui/system'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
-import { setFilmItemThunk } from '../../../store/FilmReducer'
-import Loader from '../../common/Loader'
+import { setFilmItemThunk } from '../../store/FilmReducer'
+import Loader from '../common/Loader'
 
-const FilmPage = () => {
+const ShowPage = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const params = useParams()
@@ -16,18 +16,11 @@ const FilmPage = () => {
 
   useEffect(() => {
     let type = matchPath('/film/*', location.pathname) ? 'movie' : 'tv'
-    console.log(type)
     dispatch(setFilmItemThunk(type, params.id))
   }, [])
 
   if (!filmItem) {
     return <Loader />
-  }
-
-  const runTime = (timestamp) => {
-    let hours = Math.floor(timestamp / 60)
-    let minutes = timestamp % 60
-    return hours + 'h ' + minutes + 'm '
   }
 
   return (
@@ -44,17 +37,16 @@ const FilmPage = () => {
       <Box sx={{ width: 650, height: '100%', mb: 15 }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant='h4' sx={{ mr: 1 }}>
-            {filmItem.original_title}
+            {filmItem.original_name}
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography variant='caption' sx={{ mr: 4 }}>
             {filmItem.tagline}
           </Typography>
-          <Typography variant='caption' sx={{ mr: 4 }}>
-            {runTime(filmItem.runtime)}
+          <Typography variant='caption'>
+            {filmItem.first_air_date.slice(0, 4)} - {filmItem.last_air_date.slice(0, 4)}
           </Typography>
-          <Typography variant='caption'>{filmItem.release_date.slice(0, 4)}</Typography>
         </Box>
         <Box sx={{ mt: 6 }}>
           {filmItem.genres.map((genre) => (
@@ -70,18 +62,45 @@ const FilmPage = () => {
           <Rating name='read-only' value={filmItem.vote_average} readOnly max={10} size='large' />
         </Box>
         <Divider sx={{ backgroundColor: 'white' }} />
+
+        <Box sx={{ mt: 6 }}>
+          <Typography component='legend' variant='h6'>
+            Seasons:
+          </Typography>
+          <Box sx={{ mb: 2 }}>{/* seasons */}</Box>
+          <Grid container spacing={1}>
+            {filmItem.seasons.map((season) => (
+              <Grid item key={season.name}>
+                <Card sx={{ mb: 2, width: 300, backgroundColor: '#1A1C20', color: 'white' }}>
+                  <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Box>
+                      <Box sx={{ mb: 1 }}>
+                        <Typography variant='h6'>{season.name}</Typography>
+                      </Box>
+                      <Box sx={{ mb: 1, color: '#708898' }}>
+                        <Typography variant='body2'>Out: {season.air_date}</Typography>
+                      </Box>
+                      <Box sx={{ mb: 1, color: '#708898' }}>
+                        <Typography variant='body2'>Episodes: {season.episode_count}</Typography>
+                      </Box>
+                    </Box>
+                    <Box>
+                      {season.poster_path ? (
+                        <img src={`https://image.tmdb.org/t/p/original/${season.poster_path}`} style={{ width: '120px' }} alt='company logo' />
+                      ) : null}
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
+
         <Box sx={{ mt: 6 }}>
           <Typography component='legend' variant='h6'>
             Production:
           </Typography>
-          <Box sx={{ mb: 2 }}>
-            <Typography component='legend' variant='body2'>
-              <b>Budget:</b> {filmItem.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-            </Typography>
-            <Typography component='legend' variant='body2'>
-              <b>Revenue:</b> {filmItem.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-            </Typography>
-          </Box>
+          <Box sx={{ mb: 2 }}>{/* seasons */}</Box>
           <Grid container spacing={1}>
             {filmItem.production_companies.map((company) => (
               <Grid item key={company.name}>
@@ -158,4 +177,4 @@ const FilmPage = () => {
   )
 }
 
-export default FilmPage
+export default ShowPage

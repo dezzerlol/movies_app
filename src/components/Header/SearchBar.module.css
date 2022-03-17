@@ -1,0 +1,24 @@
+.nav {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.item {
+  text-decoration: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.itemLink {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+}
+
+a.active {
+  color: red;
+  text-decoration: none;
+}

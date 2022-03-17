@@ -20,7 +20,16 @@ const SearchResult = () => {
   }
 
   const filmsOutput = searchResult.map((film) => {
-    return <FilmItem key={film.id} id={film.id} poster={film.poster_path} title={film.title} rating={film.vote_average} onClickHandle={onClickHandle} />
+    return (
+      <FilmItem
+        key={film.id}
+        id={film.id}
+        poster={film.poster_path}
+        title={film.title ? film.title : film.name}
+        rating={film.vote_average}
+        onClickHandle={onClickHandle}
+      />
+    )
   })
 
   return (

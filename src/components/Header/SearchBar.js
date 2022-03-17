@@ -13,12 +13,14 @@ import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import ListItem from '@mui/material/ListItem'
-import ListItemIcon from '@mui/material/ListItemIcon'
+import MovieIcon from '@mui/icons-material/Movie'
 import ListItemText from '@mui/material/ListItemText'
 import ThemeSwitch from './ThemeSwitch'
 import { NavLink } from 'react-router-dom'
+import styles from './SearchBar.module.css'
+import LiveTvIcon from '@mui/icons-material/LiveTv'
 
-const drawerWidth = 240
+const drawerWidth = 220
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   flexGrow: 1,
@@ -85,11 +87,13 @@ export default function PersistentDrawerLeft() {
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1 }}>
-            <NavLink to='/' style={{ textDecoration: 'none', color: 'white' }}>
-              <Typography variant='h6' noWrap component='div'>
-                Movies
-              </Typography>
-            </NavLink>
+            <Box sx={{ width: '70px' }}>
+              <NavLink to='/' style={{ textDecoration: 'none', color: 'white' }}>
+                <Typography variant='h6' component='div'>
+                  Movies
+                </Typography>
+              </NavLink>
+            </Box>
           </Box>
           <ThemeSwitch />
         </Toolbar>
@@ -112,22 +116,52 @@ export default function PersistentDrawerLeft() {
           <IconButton onClick={handleDrawerClose}>{theme.direction === 'ltr' ? <ChevronLeftIcon sx={{ color: 'white' }} /> : <ChevronRightIcon />}</IconButton>
         </DrawerHeader>
         <Divider sx={{ backgroundColor: 'white' }} />
-        <List>
-          {['Popular now', 'Latest', 'Upcoming', 'Top rated', 'Favorites'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon></ListItemIcon>
-              <ListItemText primary={text} />
+        <List className={styles.nav}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <MovieIcon sx={{ mr: 1 }} />
+            <Typography variant='h5'>Movies</Typography>
+          </Box>
+
+          <NavLink to={`/movies/popular`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Popular'} />
             </ListItem>
-          ))}
+          </NavLink>
+          <NavLink to={`/movies/in_theatres`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'In theatres'} />
+            </ListItem>
+          </NavLink>
+          <NavLink to={`/movies/upcoming`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Upcoming'} />
+            </ListItem>
+          </NavLink>
+          <NavLink to={`/movies/top_rated`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Top rated'} />
+            </ListItem>
+          </NavLink>
+
+          <NavLink to={`/Favorites`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Favorites'} />
+            </ListItem>
+          </NavLink>
         </List>
+
         <Divider sx={{ backgroundColor: 'white' }} />
-        <List>
-          {['Movies', 'TV shows'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon></ListItemIcon>
-              <ListItemText primary={text} />
+        <List className={styles.nav}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <LiveTvIcon sx={{ mr: 1 }} />
+            <Typography variant='h5'>TV shows</Typography>
+          </Box>
+
+          <NavLink to={'/shows/popular'} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Popular'} />
             </ListItem>
-          ))}
+          </NavLink>
         </List>
       </Drawer>
       <Main open={open}>

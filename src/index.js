@@ -16,11 +16,15 @@ const theme = createTheme({
       main: '#FFFFFF',
     },
   },
+
+  typography: {
+    fontFamily: 'Roboto',
+  },
 })
 
 ReactDOM.render(
   <React.StrictMode>
-    <HashRouter>
+    <HashRouter basename='/'>
       <Provider store={store}>
         <ThemeProvider theme={theme}>
           <App />
