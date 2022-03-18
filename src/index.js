@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import App from './App'
 import store from './store/redux-store'
-import './index.css'
+import './index.module.css'
 
 const theme = createTheme({
   palette: {

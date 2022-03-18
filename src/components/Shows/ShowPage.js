@@ -28,7 +28,7 @@ const ShowPage = () => {
       sx={{
         display: 'flex',
         justifyContent: 'space-between',
-        color: 'white',
+        color: 'var(--color)',
       }}>
       <Box sx={{ width: 501, height: 751 }}>
         <img src={`https://image.tmdb.org/t/p/original/${filmItem.poster_path}`} alt='film poster' style={{ width: '400px' }} />
@@ -61,7 +61,7 @@ const ShowPage = () => {
           </Typography>
           <Rating name='read-only' value={filmItem.vote_average} readOnly max={10} size='large' />
         </Box>
-        <Divider sx={{ backgroundColor: 'white' }} />
+        <Divider sx={{ backgroundColor: 'var(--colorSecondary2)' }} />
 
         <Box sx={{ mt: 6 }}>
           <Typography component='legend' variant='h6'>
@@ -71,16 +71,16 @@ const ShowPage = () => {
           <Grid container spacing={1}>
             {filmItem.seasons.map((season) => (
               <Grid item key={season.name}>
-                <Card sx={{ mb: 2, width: 300, backgroundColor: '#1A1C20', color: 'white' }}>
+                <Card sx={{ mb: 2, width: 300, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
                   <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Box>
                       <Box sx={{ mb: 1 }}>
                         <Typography variant='h6'>{season.name}</Typography>
                       </Box>
-                      <Box sx={{ mb: 1, color: '#708898' }}>
+                      <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
                         <Typography variant='body2'>Out: {season.air_date}</Typography>
                       </Box>
-                      <Box sx={{ mb: 1, color: '#708898' }}>
+                      <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
                         <Typography variant='body2'>Episodes: {season.episode_count}</Typography>
                       </Box>
                     </Box>
@@ -104,7 +104,7 @@ const ShowPage = () => {
           <Grid container spacing={1}>
             {filmItem.production_companies.map((company) => (
               <Grid item key={company.name}>
-                <Card sx={{ mb: 2, width: 300, backgroundColor: '#1A1C20', color: 'white' }}>
+                <Card sx={{ mb: 2, width: 300, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
                   <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Box sx={{ mb: 1 }}>
                       <Typography variant='body2'>{company.name}</Typography>
@@ -121,7 +121,7 @@ const ShowPage = () => {
           </Grid>
         </Box>
 
-        <Divider sx={{ backgroundColor: 'white' }} />
+        <Divider sx={{ backgroundColor: 'var(--colorSecondary2)' }} />
 
         <Box sx={{ mt: 6 }}>
           <Typography component='legend' variant='h5'>
@@ -130,14 +130,14 @@ const ShowPage = () => {
           <Grid container spacing={4}>
             {castItem.map((cast) => (
               <Grid item>
-                <Card sx={{ width: 260, height: 110, backgroundColor: '#1A1C20', color: 'white' }}>
+                <Card sx={{ width: 260, height: 110, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
                   <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant='h5'>{cast.name}</Typography>
                       <Avatar src={`https://image.tmdb.org/t/p/original/${cast.profile_path}`} sx={{ width: 60, height: 60 }} alt='actor pic' />
                     </Box>
                     <Box>
-                      <Typography variant='caption' sx={{ color: '#C7C7C7' }}>
+                      <Typography variant='caption' sx={{ color: 'var(--colorSecondary)' }}>
                         as: {cast.character}
                       </Typography>
                     </Box>
@@ -155,14 +155,14 @@ const ShowPage = () => {
           <Grid container spacing={4}>
             {crewItem.map((crew) => (
               <Grid item>
-                <Card sx={{ width: 260, height: 110, backgroundColor: '#1A1C20', color: 'white' }}>
+                <Card sx={{ width: 260, height: 110, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
                   <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant='h5'>{crew.name}</Typography>
                       <Avatar src={`https://image.tmdb.org/t/p/original/${crew.profile_path}`} sx={{ width: 60, height: 60 }} alt='actor pic' />
                     </Box>
                     <Box>
-                      <Typography variant='caption' sx={{ color: '#C7C7C7' }}>
+                      <Typography variant='caption' sx={{ color: 'var(--colorSecondary)' }}>
                         {crew.job}
                       </Typography>
                     </Box>

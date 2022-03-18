@@ -95,7 +95,7 @@ export default function PersistentDrawerLeft() {
               </NavLink>
             </Box>
           </Box>
-          <ThemeSwitch />
+          <ThemeSwitch /> {/* theme switcher */}
         </Toolbar>
       </AppBar>
 

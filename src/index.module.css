@@ -1,0 +1,34 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  margin: 0;
+  font-family: 'Roboto', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
+.app_wrapper {
+  background-color: var(--background);
+  min-height: 100%;
+}
+
+:root {
+  --background: #edeef0;
+  --color: #000000;
+  --colorSecondary: #818c99;
+  --colorSecondary2: #c7c7c7;
+  --container: #f9f9f9;
+}
+
+[data-theme='dark'] {
+  --background: #222a31;
+  --color: #ffffff;
+  --colorSecondary: #708898;
+  --colorSecondary2: #c7c7c7;
+  --container: #1a1c20;
+}

@@ -1,31 +1,33 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import styles from './App.module.css'
+import styles from './index.module.css'
 import ScrollToTop from './components/common/ScrollToTop'
-import FilmPage from './components/Films/MainPage/FilmPage'
-import Films from './components/Films/MainPage/FilmsMainPage'
-import SearchResult from './components/Films/SearchResults/SearchResult'
+import FilmPage from './components/Films/MainPage/Page/FilmPage'
+import FilmsMainPage from './components/Films/MainPage/Page/FilmsMainPage'
+import SearchResult from './components/Films/FilmSearch/SearchResults/SearchResult'
 import SearchBar from './components/Header/SearchBar'
 import ShowPage from './components/Shows/ShowPage'
+import { useSelector } from 'react-redux'
 
 const App = () => {
+  const darkMode = useSelector((state) => state.filmReducer.darkMode)
   return (
-    <div className={styles.app_wrapper}>
+    <div className={styles.app_wrapper} data-theme={darkMode ? 'dark' : 'light'}>
       <div>
         <SearchBar />
       </div>
       <Routes>
         <Route path='/' element={<Navigate to='/movies/popular' />} />
-        <Route path='/movies' element={<Films />}>
-          <Route path='popular' element={<Films />} />
-          <Route path='in_theatres' element={<Films />} />
-          <Route path='upcoming' element={<Films />} />
-          <Route path='top_rated' element={<Films />} />
+        <Route path='/movies' element={<FilmsMainPage />}>
+          <Route path='popular' element={<FilmsMainPage />} />
+          <Route path='in_theatres' element={<FilmsMainPage />} />
+          <Route path='upcoming' element={<FilmsMainPage />} />
+          <Route path='top_rated' element={<FilmsMainPage />} />
         </Route>
-        <Route path='/shows' element={<Films />}>
-          <Route path='popular' element={<Films />} />
+        <Route path='/shows' element={<FilmsMainPage />}>
+          <Route path='popular' element={<FilmsMainPage />} />
         </Route>
-        <Route path='/Favorites' element={<Films />} />
-        <Route path='/film/:id' element={<FilmPage />} />
+        <Route path='/Favorites' element={<FilmsMainPage />} />
+        <Route path='/movie/:id' element={<FilmPage />} />
         <Route path='/show/:id' element={<ShowPage />} />
         <Route path='search' element={<SearchResult />} />
       </Routes>

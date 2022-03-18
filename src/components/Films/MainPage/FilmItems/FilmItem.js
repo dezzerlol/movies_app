@@ -7,8 +7,8 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { Box } from '@mui/system'
 import React from 'react'
-import styles from '../Films/MainPage/Films.module.css'
-import defaultPic from '../../images/defaultPic.jpg'
+import defaultPic from '../../../../images/defaultPic.jpg'
+import styles from './Films.module.css'
 
 const FilmItem = (props) => {
   return (
@@ -19,8 +19,8 @@ const FilmItem = (props) => {
           maxWidth: 230,
           maxHeight: 480,
           height: 480,
-          color: 'white',
-          backgroundColor: '#1A1C20',
+          color: 'var(--color)',
+          backgroundColor: 'var(--container)',
         }}>
         <CardActionArea onClick={() => props.onClickHandle(props.id)}>
           <CardMedia component='img' image={props.poster ? `https://image.tmdb.org/t/p/w780/${props.poster}` : defaultPic} height='350' alt='film poster' />

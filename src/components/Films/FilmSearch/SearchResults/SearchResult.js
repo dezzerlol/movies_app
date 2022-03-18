@@ -1,9 +1,9 @@
 import { Box, Container, Grid, Typography } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import FilmItem from '../FilmItem'
-import Loader from '../../common/Loader'
-import { setFilmItemThunk } from '../../../store/FilmReducer'
+import FilmItem from '../../MainPage/FilmItems/FilmItem'
+import Loader from '../../../common/Loader'
+import { setFilmItemThunk } from '../../../../store/FilmReducer'
 import { useNavigate } from 'react-router-dom'
 
 const SearchResult = () => {
@@ -16,7 +16,7 @@ const SearchResult = () => {
 
   const onClickHandle = (id) => {
     dispatch(setFilmItemThunk(id))
-    return navigate(`/film/${id}`)
+    return navigate(`/movie/${id}`)
   }
 
   const filmsOutput = searchResult.map((film) => {

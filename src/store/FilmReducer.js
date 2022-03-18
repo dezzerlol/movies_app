@@ -1,7 +1,9 @@
 import { filmApi } from '../api/filmApi'
+
 const GET_FILMS = 'GET_FILMS'
 const GET_FILM_ITEM = 'GET_FILM_ITEM'
 const SEARCH_FILMS = 'SEARCH_FILMS'
+const SET_DARK_MODE = 'SET_DARK_MODE'
 
 let initialState = {
   films: null,
@@ -11,6 +13,7 @@ let initialState = {
     crew: null,
   },
   searchResult: [],
+  darkMode: true,
 }
 
 const FilmReducer = (state = initialState, action) => {
@@ -33,6 +36,11 @@ const FilmReducer = (state = initialState, action) => {
       return {
         ...state,
         searchResult: action.searchResult,
+      }
+    case SET_DARK_MODE:
+      return {
+        ...state,
+        darkMode: action.darkMode,
       }
 
     default:
@@ -59,6 +67,13 @@ const actions = {
     return {
       type: SEARCH_FILMS,
       searchResult,
+    }
+  },
+
+  setDarkMode(darkMode) {
+    return {
+      type: SET_DARK_MODE,
+      darkMode,
     }
   },
 }
@@ -112,6 +127,12 @@ export const searchFilmThunk = (term) => {
   return async (dispatch) => {
     let res = await filmApi.searchForFilm(term)
     dispatch(actions.setSearchResults(res.data.results))
+  }
+}
+
+export const setDarkModeThunk = (darkMode) => {
+  return async (dispatch) => {
+    dispatch(actions.setDarkMode(darkMode))
   }
 }
 

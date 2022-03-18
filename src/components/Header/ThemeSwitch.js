@@ -1,7 +1,9 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 import clsx from 'clsx'
 import { styled } from '@mui/system'
 import { useSwitch } from '@mui/base/SwitchUnstyled'
+import { useDispatch, useSelector } from 'react-redux'
+import { setDarkModeThunk } from '../../store/FilmReducer'
 
 const blue = {
   700: '#0059B2',
@@ -60,6 +62,7 @@ const SwitchThumb = styled('span')`
 
   &.checked {
     transform: translateX(24px);
+    background-color: #222a31;
 
     &::before {
       background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
@@ -80,12 +83,20 @@ const SwitchTrack = styled('span')(
 )
 
 function MUISwitch(props) {
-  const { getInputProps, checked, disabled, focusVisible } = useSwitch(props)
+  const dispatch = useDispatch()
+  const darkMode = useSelector((state) => state.filmReducer.darkMode)
+
+  const [checked, setChecked] = useState(darkMode)
+  const { getInputProps, disabled, focusVisible } = useSwitch(props)
 
   const stateClasses = {
     checked,
     disabled,
     focusVisible,
+  }
+  const handleChange = () => {
+    setChecked(!checked)
+    dispatch(setDarkModeThunk(!checked))
   }
 
   return (
@@ -93,7 +104,7 @@ function MUISwitch(props) {
       <SwitchTrack>
         <SwitchThumb className={clsx(stateClasses)} />
       </SwitchTrack>
-      <SwitchInput {...getInputProps()} aria-label='switch' />
+      <SwitchInput {...getInputProps()} aria-label='switch' onChange={handleChange} />
     </SwitchRoot>
   )
 }
