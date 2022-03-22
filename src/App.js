@@ -17,16 +17,20 @@ const App = () => {
       </div>
       <Routes>
         <Route path='/' element={<Navigate to='/movies/popular' />} />
-        <Route path='/movies' element={<FilmsMainPage />}>
+
+        <Route path='/movies'>
           <Route path='popular' element={<FilmsMainPage />} />
           <Route path='in_theatres' element={<FilmsMainPage />} />
           <Route path='upcoming' element={<FilmsMainPage />} />
           <Route path='top_rated' element={<FilmsMainPage />} />
         </Route>
-        <Route path='/shows' element={<FilmsMainPage />}>
+
+        <Route path='/shows'>
           <Route path='popular' element={<FilmsMainPage />} />
+          <Route path='top_rated' element={<FilmsMainPage />} />
         </Route>
-        <Route path='/Favorites' element={<FilmsMainPage />} />
+
+        <Route path='/Favorites' element={<div>404</div>} />
         <Route path='/movie/:id' element={<FilmPage />} />
         <Route path='/show/:id' element={<ShowPage />} />
         <Route path='search' element={<SearchResult />} />

@@ -162,6 +162,12 @@ export default function PersistentDrawerLeft() {
               <ListItemText primary={'Popular'} />
             </ListItem>
           </NavLink>
+
+          <NavLink to={'/shows/top_rated'} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+            <ListItem button className={styles.item}>
+              <ListItemText primary={'Top rated'} />
+            </ListItem>
+          </NavLink>
         </List>
       </Drawer>
       <Main open={open}>

@@ -1,23 +1,86 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Button, Container, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
-import { matchPath, useLocation, useNavigate } from 'react-router-dom'
-import { setNowInTheTheatresThunk, setPopularFilmsThunk, setPopularTvShows, setTopRatedFilmsThunk, setUpcomingFilmsThunk } from '../../../../store/FilmReducer'
+import { useDispatch, useSelector } from 'react-redux'
+import { matchPath, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import {
+  setNowInTheTheatresThunk,
+  setPopularFilmsThunk,
+  setPopularTvShows,
+  setTopRatedFilmsThunk,
+  setTopRatedTvShows,
+  setUpcomingFilmsThunk
+} from '../../../../store/FilmReducer'
 import Loader from '../../../common/Loader'
-import FilmItem from '../FilmItems/FilmItem'
 import FilmSearchField from '../../FilmSearch/FilmSearchField'
+import FilmItem from '../FilmItems/FilmItem'
 
 const Films = (props) => {
+  const films = useSelector((state) => state.filmReducer.films)
+  const currentPage = useSelector((state) => state.filmReducer.currentPage)
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams({})
+  const queryPage = searchParams.get('page')
   const [section, setSection] = useState('')
-  const [fav, setFav] = useState(false)
-  const films = useSelector((state) => state.filmReducer.films, shallowEqual)
+  const [page, setPage] = useState(currentPage)
 
-  const addToFavorites = (e) => {
-    setFav(!fav)
+  const loadMoreFilms = () => {
+    setPage(page + 1)
+  }
+
+ 
+  useEffect(() => {
+    setPage(1)
+    setSearchParams({
+      page: 1,
+    })
+  }, [section])
+
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+
+    setSearchParams({
+      page: page,
+    })
+
+
+    switch (location.pathname) {
+      case '/movies/popular':
+        setSection('Popular movies')       
+        return dispatch(setPopularFilmsThunk(page))
+
+      case '/movies/in_theatres':
+        setSection('In theatres')
+        return dispatch(setNowInTheTheatresThunk(page))
+
+      case '/movies/upcoming':
+        setSection('Upcoming')
+        return dispatch(setUpcomingFilmsThunk(page))
+
+      case '/movies/top_rated':
+        setSection('Top rated')
+        return dispatch(setTopRatedFilmsThunk(page))
+
+      case '/shows/popular':
+        setSection('Popular shows')
+        return dispatch(setPopularTvShows(page))
+
+      case '/shows/top_rated':
+        setSection('Top rated')
+        return dispatch(setTopRatedTvShows(page))
+
+      default:
+        setSection('Popular movies')
+        return dispatch(setPopularFilmsThunk(1))
+    }
+  }, [location.pathname, page])
+
+  if (films.length === 0) {
+    return <Loader />
   }
 
   const onClickHandle = (id) => {
@@ -29,38 +92,6 @@ const Films = (props) => {
     }
   }
 
-  useEffect(() => {
-    switch (location.pathname) {
-      case '/movies/popular':
-        setSection('Popular movies')
-        return dispatch(setPopularFilmsThunk())
-
-      case '/movies/in_theatres':
-        setSection('In theares')
-        return dispatch(setNowInTheTheatresThunk())
-
-      case '/movies/upcoming':
-        setSection('Upcoming')
-        return dispatch(setUpcomingFilmsThunk())
-
-      case '/movies/top_rated':
-        setSection('Top rated')
-        return dispatch(setTopRatedFilmsThunk())
-
-      case '/shows/popular':
-        setSection('Popular shows')
-        return dispatch(setPopularTvShows())
-
-      default:
-        setSection('Popular movies')
-        return dispatch(setPopularFilmsThunk())
-    }
-  }, [location.pathname])
-
-  if (!films) {
-    return <Loader />
-  }
-
   const filmsOutput = films.map((film) => {
     return (
       <FilmItem
@@ -69,9 +100,8 @@ const Films = (props) => {
         poster={film.poster_path}
         title={film.title ? film.title : film.name}
         rating={film.vote_average}
-        fav={fav}
         onClickHandle={onClickHandle}
-        addToFavorites={addToFavorites}
+        releaseDate={film.release_date ? film.release_date : film.first_air_date ? film.first_air_date : ''}
       />
     )
   })
@@ -87,6 +117,11 @@ const Films = (props) => {
       <Grid container spacing={4} justifyContent='center' alignItems='center' sx={{ mb: '1.5rem' }}>
         {filmsOutput}
       </Grid>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Button variant='outlined' onClick={loadMoreFilms}>
+          Load more
+        </Button>
+      </Box>
     </Container>
   )
 }

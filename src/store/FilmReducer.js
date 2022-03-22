@@ -4,9 +4,11 @@ const GET_FILMS = 'GET_FILMS'
 const GET_FILM_ITEM = 'GET_FILM_ITEM'
 const SEARCH_FILMS = 'SEARCH_FILMS'
 const SET_DARK_MODE = 'SET_DARK_MODE'
+const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
 
 let initialState = {
-  films: null,
+  films: [],
+  currentPage: 1,
   filmItem: {
     item: null,
     cast: null,
@@ -37,6 +39,12 @@ const FilmReducer = (state = initialState, action) => {
         ...state,
         searchResult: action.searchResult,
       }
+    case SET_CURRENT_PAGE:
+      return {
+        ...state,
+        currentPage: action.currentPage,
+      }
+
     case SET_DARK_MODE:
       return {
         ...state,
@@ -76,39 +84,59 @@ const actions = {
       darkMode,
     }
   },
+
+  setCurrentPage(currentPage) {
+    return {
+      type: SET_CURRENT_PAGE,
+      currentPage,
+    }
+  },
 }
 
-export const setPopularFilmsThunk = () => {
+export const setPopularFilmsThunk = (currentPage) => {
   return async (dispatch) => {
-    let res = await filmApi.getPopularFilms()
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getPopularFilms(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
 }
 
-export const setTopRatedFilmsThunk = () => {
+export const setNowInTheTheatresThunk = (currentPage) => {
   return async (dispatch) => {
-    let res = await filmApi.getTopRatedFilms()
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getNowInTheTheatres(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
 }
 
-export const setNowInTheTheatresThunk = () => {
+export const setTopRatedFilmsThunk = (currentPage) => {
   return async (dispatch) => {
-    let res = await filmApi.getNowInTheTheatres()
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getTopRatedFilms(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
 }
 
-export const setUpcomingFilmsThunk = () => {
+export const setUpcomingFilmsThunk = (currentPage) => {
   return async (dispatch) => {
-    let res = await filmApi.getUpcomingFilms()
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getUpcomingFilms(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
 }
 
-export const setPopularTvShows = () => {
+export const setPopularTvShows = (currentPage) => {
   return async (dispatch) => {
-    let res = await filmApi.getPopularTvShows()
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getPopularTvShows(currentPage)
+    dispatch(actions.setFilms(res.data.results))
+  }
+}
+
+export const setTopRatedTvShows = (currentPage) => {
+  return async (dispatch) => {
+    dispatch(actions.setCurrentPage(currentPage))
+    let res = await filmApi.getTopRatedTvShows(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
 }

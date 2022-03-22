@@ -28,6 +28,7 @@ const SearchResult = () => {
         title={film.title ? film.title : film.name}
         rating={film.vote_average}
         onClickHandle={onClickHandle}
+        releaseDate={film.release_date ? film.release_date : film.first_air_date ? film.first_air_date : ''}
       />
     )
   })
