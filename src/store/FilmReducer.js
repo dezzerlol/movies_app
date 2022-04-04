@@ -5,6 +5,7 @@ const GET_FILM_ITEM = 'GET_FILM_ITEM'
 const SEARCH_FILMS = 'SEARCH_FILMS'
 const SET_DARK_MODE = 'SET_DARK_MODE'
 const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
+const CLEAR_FILMS = 'CLEAR_FILMS'
 
 let initialState = {
   films: [],
@@ -21,9 +22,16 @@ let initialState = {
 const FilmReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_FILMS:
+      const { films } = action
       return {
         ...state,
-        films: action.films,
+        films: [...state.films, ...films],
+      }
+
+    case CLEAR_FILMS:
+      return {
+        ...state,
+        films: [],
       }
     case GET_FILM_ITEM:
       return {
@@ -56,13 +64,18 @@ const FilmReducer = (state = initialState, action) => {
   }
 }
 
-const actions = {
+export const actions = {
   setFilms(films) {
     return {
       type: GET_FILMS,
       films,
     }
   },
+
+  clearFilms() {
+    return { type: CLEAR_FILMS }
+  },
+
   setFilmItem(filmItem, cast, crew) {
     return {
       type: GET_FILM_ITEM,

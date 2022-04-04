@@ -41,12 +41,9 @@ const Films = (props) => {
 
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-
     setSearchParams({
       page: page,
     })
-
 
     switch (location.pathname) {
       case '/movies/popular':

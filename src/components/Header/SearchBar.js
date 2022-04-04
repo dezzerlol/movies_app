@@ -19,6 +19,8 @@ import ThemeSwitch from './ThemeSwitch'
 import { NavLink } from 'react-router-dom'
 import styles from './SearchBar.module.css'
 import LiveTvIcon from '@mui/icons-material/LiveTv'
+import { actions } from '../../store/FilmReducer'
+import { useDispatch } from 'react-redux'
 
 const drawerWidth = 220
 
@@ -67,6 +69,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 export default function PersistentDrawerLeft() {
   const theme = useTheme()
+  const dispatch = useDispatch()
   const [open, setOpen] = React.useState(false)
 
   const handleDrawerOpen = () => {
@@ -75,6 +78,10 @@ export default function PersistentDrawerLeft() {
 
   const handleDrawerClose = () => {
     setOpen(false)
+  }
+
+  const clearFilmState = () => {
+    dispatch(actions.clearFilms())
   }
 
   return (
@@ -122,22 +129,45 @@ export default function PersistentDrawerLeft() {
             <Typography variant='h5'>Movies</Typography>
           </Box>
 
-          <NavLink to={`/movies/popular`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+          <NavLink
+            to={`/movies/popular`}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Popular'} />
             </ListItem>
           </NavLink>
-          <NavLink to={`/movies/in_theatres`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+
+          <NavLink
+            to={`/movies/in_theatres`}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'In theatres'} />
             </ListItem>
           </NavLink>
-          <NavLink to={`/movies/upcoming`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+
+          <NavLink
+            to={`/movies/upcoming`}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Upcoming'} />
             </ListItem>
           </NavLink>
-          <NavLink to={`/movies/top_rated`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+
+          <NavLink
+            to={`/movies/top_rated`}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Top rated'} />
             </ListItem>
@@ -157,13 +187,23 @@ export default function PersistentDrawerLeft() {
             <Typography variant='h5'>TV shows</Typography>
           </Box>
 
-          <NavLink to={'/shows/popular'} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+          <NavLink
+            to={'/shows/popular'}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Popular'} />
             </ListItem>
           </NavLink>
 
-          <NavLink to={'/shows/top_rated'} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
+          <NavLink
+            to={'/shows/top_rated'}
+            className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}
+            onClick={() => {
+              clearFilmState()
+            }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Top rated'} />
             </ListItem>

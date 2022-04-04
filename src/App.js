@@ -30,10 +30,11 @@ const App = () => {
           <Route path='top_rated' element={<FilmsMainPage />} />
         </Route>
 
-        <Route path='/Favorites' element={<div>404</div>} />
+        <Route path='/Favorites' element={<div>to be added...</div>} />
         <Route path='/movie/:id' element={<FilmPage />} />
         <Route path='/show/:id' element={<ShowPage />} />
         <Route path='search' element={<SearchResult />} />
+        <Route path='*' element={<div>404 page not found</div>} />
       </Routes>
       <ScrollToTop />
     </div>
