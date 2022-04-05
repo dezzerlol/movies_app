@@ -7,13 +7,13 @@ import { setFilmItemThunk } from '../../../../store/FilmReducer'
 import Loader from '../../../common/Loader'
 import styled from '@emotion/styled'
 
-const ContainerPage = styled(Container)`
+const PageContainer = styled(Container)`
   display: flex;
   justify-content: space-between;
   color: var(--color);
   flex-direction: column;
   align-items: center;
-  
+
   @media (min-width: 1200px) {
     flex-direction: row;
     align-items: flex-start;
@@ -26,20 +26,33 @@ const CardContainer = styled(Card)`
   background-color: var(--container);
   color: var(--color);
 `
+const PageBox = styled(Box)`
+  width: 650;
+  height: '100%';
+  margin-bottom: 30px;
+
+  @media (min-width: 1200px) {
+    margin-left: 5rem;
+  }
+`
 
 const Image = styled.img`
-
-width: 400px;
-
+  width: 250px;
+  @media (min-width: 1200px) {
+    width: 400px;
+  }
 `
 
 const PosterBox = styled(Box)`
-margin-bottom: 12rem;
-width: 400px; 
-height: 400px;
-@media(min-width: 1200px){
-  margin-bottom: 0;
-}
+  margin-bottom: 3rem;
+  width: 250px;
+  height: 375px;
+
+  @media (min-width: 1200px) {
+    margin-bottom: 0;
+    width: 400px;
+    height: 375px;
+  }
 `
 
 const FilmPage = () => {
@@ -51,6 +64,7 @@ const FilmPage = () => {
   const crew = useSelector((state) => state.filmReducer.filmItem.crew)
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     let type = matchPath('/movie/*', location.pathname) ? 'movie' : 'tv'
     dispatch(setFilmItemThunk(type, params.id))
   }, [])
@@ -69,7 +83,7 @@ const FilmPage = () => {
     return (
       <Grid container spacing={4}>
         {roleArr.map((role) => (
-          <Grid item key={role.name} xs={5}>
+          <Grid item key={role.credit_id} xs={8} md={6}>
             <CardContainer>
               <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -90,15 +104,15 @@ const FilmPage = () => {
   }
 
   return (
-    <ContainerPage>
-      <PosterBox sx={{  }}>
+    <PageContainer>
+      <PosterBox>
         <Image src={`https://image.tmdb.org/t/p/original/${filmItem.poster_path}`} alt='film poster' />
       </PosterBox>
 
-      <Box sx={{ width: 650, height: '100%', mb: 15 }}>
+      <PageBox>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant='h4' sx={{ mr: 1 }}>
-            {filmItem.original_title}
+            {filmItem.original_title ? filmItem.original_title : filmItem.original_name}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex' }}>
@@ -106,9 +120,9 @@ const FilmPage = () => {
             {filmItem.tagline}
           </Typography>
           <Typography variant='caption' sx={{ mr: 4 }}>
-            {runTime(filmItem.runtime)}
+            {filmItem.runtime ? runTime(filmItem.runtime) : filmItem.first_air_date.slice(0, 4) + '-' + filmItem.last_air_date.slice(0, 4)}
           </Typography>
-          <Typography variant='caption'>{filmItem.release_date.slice(0, 4)}</Typography>
+          <Typography variant='caption'>{filmItem.release_date ? filmItem.release_date.slice(0, 4) : ''}</Typography>
         </Box>
         <Box sx={{ mt: 6 }}>
           {filmItem.genres.map((genre) => (
@@ -124,29 +138,72 @@ const FilmPage = () => {
           <Rating name='read-only' value={filmItem.vote_average} readOnly max={10} size='large' />
         </Box>
         <Divider sx={{ backgroundColor: 'var(--colorSecondary2)' }} />
+
+        {filmItem.seasons && (
+          <Box sx={{ mt: 6 }}>
+            <Typography component='legend' variant='h6'>
+              Seasons:
+            </Typography>
+            <Grid container spacing={1}>
+              {filmItem.seasons.map((season) => (
+                <Grid item key={season.name}>
+                  <Card sx={{ mb: 2, width: 300, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
+                    <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <Box>
+                        <Box sx={{ mb: 1 }}>
+                          <Typography variant='h6'>{season.name}</Typography>
+                        </Box>
+                        <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
+                          <Typography variant='body2'>Out: {season.air_date}</Typography>
+                        </Box>
+                        <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
+                          <Typography variant='body2'>Episodes: {season.episode_count}</Typography>
+                        </Box>
+                      </Box>
+                      <Box>
+                        {season.poster_path ? (
+                          <img src={`https://image.tmdb.org/t/p/original/${season.poster_path}`} style={{ width: '120px' }} alt='company logo' />
+                        ) : null}
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+        )}
+
         <Box sx={{ mt: 6 }}>
           <Typography component='legend' variant='h6'>
             Production:
           </Typography>
-          <Box sx={{ mb: 2 }}>
-            <Typography component='legend' variant='body2'>
-              <b>Budget:</b> {filmItem.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-            </Typography>
-            <Typography component='legend' variant='body2'>
-              <b>Revenue:</b> {filmItem.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-            </Typography>
-          </Box>
+          {filmItem.budget && (
+            <Box sx={{ mb: 2 }}>
+              <Typography component='legend' variant='body2'>
+                <b>Budget:</b> {filmItem.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
+              </Typography>
+              <Typography component='legend' variant='body2'>
+                <b>Revenue:</b> {filmItem.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
+              </Typography>
+            </Box>
+          )}
           <Grid container spacing={1}>
             {filmItem.production_companies.map((company) => (
               <Grid item key={company.name}>
-                <Card sx={{ mb: 2, width: 300, height: 200, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
+                <Card sx={{ mb: 2, width: 300, height: 130, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
                   <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <Box sx={{ mb: 1 }}>
-                      <Typography variant='body2'>{company.name}</Typography>
+                      <Typography component='h6' variant='h6'>
+                        {company.name}
+                      </Typography>
                     </Box>
                     <Box>
                       {company.logo_path ? (
-                        <img src={`https://image.tmdb.org/t/p/original/${company.logo_path}`} style={{ width: '120px', }} alt='company logo' />
+                        <img
+                          src={`https://image.tmdb.org/t/p/original/${company.logo_path}`}
+                          style={{ maxWidth: '100px', maxHeight: '70px', objectFit: 'cover', height: 'auto', width: 'auto' }}
+                          alt='company logo'
+                        />
                       ) : null}
                     </Box>
                   </CardContent>
@@ -165,14 +222,16 @@ const FilmPage = () => {
           {PeopleCard(cast)}
         </Box>
 
-        <Box sx={{ mt: 10 }}>
-          <Typography component='legend' variant='h5'>
-            Crew:
-          </Typography>
-          {PeopleCard(crew)}
-        </Box>
-      </Box>
-    </ContainerPage>
+        {crew.length !== 0 && (
+          <Box sx={{ mt: 10 }}>
+            <Typography component='legend' variant='h5'>
+              Crew:
+            </Typography>
+            {PeopleCard(crew)}
+          </Box>
+        )}
+      </PageBox>
+    </PageContainer>
   )
 }
 

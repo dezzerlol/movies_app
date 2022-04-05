@@ -16,22 +16,22 @@ let initialState = {
     crew: null,
   },
   searchResult: [],
-  darkMode: true,
+  darkMode: JSON.parse(localStorage.getItem('darkMode')),
 }
 
 const FilmReducer = (state = initialState, action) => {
   switch (action.type) {
     case GET_FILMS:
-      const { films } = action
       return {
         ...state,
-        films: [...state.films, ...films],
+        films: action.films,
       }
 
     case CLEAR_FILMS:
       return {
         ...state,
         films: [],
+        currentPage: 1,
       }
     case GET_FILM_ITEM:
       return {
@@ -108,7 +108,7 @@ export const actions = {
 
 export const setPopularFilmsThunk = (currentPage) => {
   return async (dispatch) => {
-    dispatch(actions.setCurrentPage(currentPage))
+    dispatch(actions.setCurrentPage(Number(currentPage)))
     let res = await filmApi.getPopularFilms(currentPage)
     dispatch(actions.setFilms(res.data.results))
   }
@@ -174,6 +174,7 @@ export const searchFilmThunk = (term) => {
 export const setDarkModeThunk = (darkMode) => {
   return async (dispatch) => {
     dispatch(actions.setDarkMode(darkMode))
+    localStorage.setItem('darkMode', darkMode)
   }
 }
 

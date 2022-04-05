@@ -1,15 +1,21 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import FilmReducer from '../store/FilmReducer'
+import { composeWithDevTools } from "redux-devtools-extension";
 
 let reducers = combineReducers({
   filmReducer: FilmReducer
 })
 
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-const store = createStore(reducers, /* preloadedState, */ composeEnhancers(applyMiddleware(thunkMiddleware))) //store to use with chrome redux extension
-// let store = createStore(reducers, applyMiddleware(thunkMiddleware)) //default store
+const composeEnhancers = composeWithDevTools({ 
+  
+  trace: true, 
+  traceLimit: 25 
+}); 
+const store = createStore(reducers, composeEnhancers(
+  applyMiddleware(thunkMiddleware) 
+));
 
 
 window.__store__ = store

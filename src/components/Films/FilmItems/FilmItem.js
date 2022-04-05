@@ -8,8 +8,8 @@ import Grid from '@mui/material/Grid'
 import Typography from '@mui/material/Typography'
 import { Box } from '@mui/system'
 import React from 'react'
-import defaultPic from '../../../../images/defaultPic.jpg'
-import styles from './Films.module.css'
+import defaultPic from '../../../images/defaultPic.jpg'
+
 
 const StyledBadge = styled(Badge)({
   '& .MuiBadge-badge': {
@@ -25,7 +25,7 @@ const FilmItem = (props) => {
     <Grid item xs={'auto'}>
       <StyledBadge badgeContent={props.rating}>
         <Card
-          className={styles.filmItemImg}
+          className={'filmItemImg'}
           sx={{
             maxWidth: 230,
             maxHeight: 480,

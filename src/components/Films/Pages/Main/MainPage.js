@@ -1,84 +1,77 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { matchPath, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
+  actions,
   setNowInTheTheatresThunk,
   setPopularFilmsThunk,
   setPopularTvShows,
   setTopRatedFilmsThunk,
   setTopRatedTvShows,
-  setUpcomingFilmsThunk
+  setUpcomingFilmsThunk,
 } from '../../../../store/FilmReducer'
 import Loader from '../../../common/Loader'
 import FilmSearchField from '../../FilmSearch/FilmSearchField'
-import FilmItem from '../FilmItems/FilmItem'
+import FilmItem from '../../FilmItems/FilmItem'
 
-const Films = (props) => {
-  const films = useSelector((state) => state.filmReducer.films)
+const Films = () => {
   const currentPage = useSelector((state) => state.filmReducer.currentPage)
+  const films = useSelector((state) => state.filmReducer.films)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
-  const [searchParams, setSearchParams] = useSearchParams({})
-  const queryPage = searchParams.get('page')
+  const [searchParams, setSearchParams] = useSearchParams()
   const [section, setSection] = useState('')
-  const [page, setPage] = useState(currentPage)
+  
 
   const loadMoreFilms = () => {
-    setPage(page + 1)
+    dispatch(actions.setCurrentPage(currentPage + 1))
+    setSearchParams({ page: String(currentPage + 1) })
+    window.scrollTo(0, 0)
   }
-
- 
-  useEffect(() => {
-    setPage(1)
-    setSearchParams({
-      page: 1,
-    })
-  }, [section])
-
+  
 
   useEffect(() => {
-    setSearchParams({
-      page: page,
-    })
-
+  
+    let queryPage = searchParams.get('page')
+    if(queryPage ===null){
+      queryPage = 1
+    }
+    
     switch (location.pathname) {
       case '/movies/popular':
-        setSection('Popular movies')       
-        return dispatch(setPopularFilmsThunk(page))
+        setSection('Popular movies')
+
+        return dispatch(setPopularFilmsThunk(queryPage))
 
       case '/movies/in_theatres':
         setSection('In theatres')
-        return dispatch(setNowInTheTheatresThunk(page))
+        return dispatch(setNowInTheTheatresThunk(currentPage))
 
       case '/movies/upcoming':
         setSection('Upcoming')
-        return dispatch(setUpcomingFilmsThunk(page))
+        return dispatch(setUpcomingFilmsThunk(currentPage))
 
       case '/movies/top_rated':
         setSection('Top rated')
-        return dispatch(setTopRatedFilmsThunk(page))
+        return dispatch(setTopRatedFilmsThunk(currentPage))
 
       case '/shows/popular':
         setSection('Popular shows')
-        return dispatch(setPopularTvShows(page))
+        return dispatch(setPopularTvShows(currentPage))
 
       case '/shows/top_rated':
         setSection('Top rated')
-        return dispatch(setTopRatedTvShows(page))
+        return dispatch(setTopRatedTvShows(currentPage))
 
       default:
         setSection('Popular movies')
         return dispatch(setPopularFilmsThunk(1))
     }
-  }, [location.pathname, page])
-
-  if (films.length === 0) {
-    return <Loader />
-  }
+  }, [location.pathname, currentPage])
 
   const onClickHandle = (id) => {
     let type = matchPath('/movies/*', location.pathname) ? 'movie' : 'tv'
@@ -115,7 +108,7 @@ const Films = (props) => {
         {filmsOutput}
       </Grid>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Button variant='outlined' onClick={loadMoreFilms}>
+        <Button variant='outlined' onClick={loadMoreFilms} sx={{ mb: '1rem' }}>
           Load more
         </Button>
       </Box>
@@ -123,4 +116,4 @@ const Films = (props) => {
   )
 }
 
-export default Films
+export default React.memo(Films)

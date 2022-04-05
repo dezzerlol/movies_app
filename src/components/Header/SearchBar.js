@@ -95,7 +95,12 @@ export default function PersistentDrawerLeft() {
           </IconButton>
           <Box sx={{ flexGrow: 1 }}>
             <Box sx={{ width: '70px' }}>
-              <NavLink to='/' style={{ textDecoration: 'none', color: 'white' }}>
+              <NavLink
+                to='/'
+                style={{ textDecoration: 'none', color: 'white' }}
+                onClick={() => {
+                  clearFilmState()
+                }}>
                 <Typography variant='h6' component='div'>
                   Movies
                 </Typography>
