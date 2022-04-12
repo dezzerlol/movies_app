@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { BrowserRouter, HashRouter } from 'react-router-dom'
 import App from './App'
-import store from './store/redux-store'
+import store from './redux/store'
 import './index.module.css'
 
 const theme = createTheme({

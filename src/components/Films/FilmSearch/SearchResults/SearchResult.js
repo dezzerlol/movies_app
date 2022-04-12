@@ -3,7 +3,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import FilmItem from '../../FilmItems/FilmItem'
 import Loader from '../../../common/Loader'
-import { setFilmItemThunk } from '../../../../store/FilmReducer'
+import { setFilmItemThunk } from '../../../../redux/FilmReducer'
 import { useNavigate } from 'react-router-dom'
 
 const SearchResult = () => {

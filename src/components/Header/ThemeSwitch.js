@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { styled } from '@mui/system'
 import { useSwitch } from '@mui/base/SwitchUnstyled'
 import { useDispatch, useSelector } from 'react-redux'
-import { setDarkModeThunk } from '../../store/FilmReducer'
+import { setDarkModeThunk } from '../../redux/FilmReducer'
 
 const blue = {
   700: '#0059B2',

@@ -4,7 +4,7 @@ import { useFormik } from 'formik'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { searchFilmThunk } from '../../../store/FilmReducer'
+import { searchFilmThunk } from '../../../redux/FilmReducer'
 import SearchIcon from '@mui/icons-material/Search'
 
 const FilmSearchField = () => {
