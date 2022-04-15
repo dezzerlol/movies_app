@@ -19,9 +19,12 @@ const App = () => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         dispatch(signIn(user))
+      
       }
     })
   }, [])
+
+
   
   return (
     <div className={styles.app_wrapper} data-theme={darkMode ? 'dark' : 'light'}>

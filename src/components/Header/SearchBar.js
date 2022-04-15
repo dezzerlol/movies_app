@@ -86,7 +86,7 @@ export default function PersistentDrawerLeft() {
   }
 
   return (
-    <Box sx={{ display: 'flex', height: '64px', mb: '2rem' }}>
+    <Box sx={{ display: 'flex', height: '64px' }}>
       <CssBaseline />
 
       <AppBar position='absolute' open={open}>
@@ -177,12 +177,6 @@ export default function PersistentDrawerLeft() {
             }}>
             <ListItem button className={styles.item}>
               <ListItemText primary={'Top rated'} />
-            </ListItem>
-          </NavLink>
-
-          <NavLink to={`/Favorites`} className={(navData) => (navData.isActive ? styles.active : styles.itemLink)}>
-            <ListItem button className={styles.item}>
-              <ListItemText primary={'Favorites'} />
             </ListItem>
           </NavLink>
         </List>
