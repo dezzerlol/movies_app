@@ -1,16 +1,16 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import styles from './index.module.css'
 import ScrollToTop from './components/common/ScrollToTop'
-import FilmPage from './components/Pages/Film/FilmPage'
-import MainPage from './components/Pages/Main/MainPage'
-import SearchResult from './components/Films/FilmSearch/SearchResults/SearchResult'
+import FilmPage from './Pages/Film/FilmPage'
+import MainPage from './Pages/Main/MainPage'
 import SearchBar from './components/Header/SearchBar'
-import Login from './components/Pages/Login/Login'
-import Profile from './components/Pages/Profile/Profile'
+import Login from './Pages/Login/LoginPage'
+import Profile from './Pages/Profile/ProfilePage'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { signIn } from './redux/AuthReducer'
+import { signIn } from './redux/AccountReducer'
 import firebase from '../src/api/accountApi'
+import SearchResult from './Pages/Main/components/SearchResult'
 
 const App = () => {
   const darkMode = useSelector((state) => state.filmReducer.darkMode)
@@ -19,7 +19,6 @@ const App = () => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         dispatch(signIn(user))
-      
       }
     })
   }, [])
@@ -50,7 +49,7 @@ const App = () => {
         <Route path='/movie/:id' element={<FilmPage />} />
         <Route path='/show/:id' element={<FilmPage />} />
         <Route path='search' element={<SearchResult />} />
-        <Route path='/profile' element={<Profile />} />
+        <Route path='/profile/:id' element={<Profile />} />
         <Route path='*' element={<div>404 page not found</div>} />
       </Routes>
       <ScrollToTop />

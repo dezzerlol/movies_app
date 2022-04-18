@@ -1,9 +1,9 @@
 import { Box, Container, Grid, Typography } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import FilmItem from '../../FilmItems/FilmItem'
-import Loader from '../../../common/Loader'
-import { setFilmItemThunk } from '../../../../redux/FilmReducer'
+import FilmItem from './FilmItem'
+import Loader from '../../../components/common/Loader'
+import { setFilmItemThunk } from '../../../redux/FilmReducer'
 import { useNavigate } from 'react-router-dom'
 
 const SearchResult = () => {
@@ -34,8 +34,8 @@ const SearchResult = () => {
   })
 
   return (
-    <Container sx={{ minHeight: '100vh' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3 }}>
+    <Container sx={{ minHeight: '100vh', mt: '2rem' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', mb: 3,  }}>
         <Typography variant='h4' sx={{ color: 'white', fontFamily: 'Roboto' }}>
           Search result
         </Typography>

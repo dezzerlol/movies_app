@@ -13,6 +13,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   background-color: var(--background);
+  /* overflow-y: auto !important; */
 }
 
 .app_wrapper {
