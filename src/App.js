@@ -3,11 +3,11 @@ import styles from './index.module.css'
 import ScrollToTop from './components/common/ScrollToTop'
 import FilmPage from './Pages/Film/FilmPage'
 import MainPage from './Pages/Main/MainPage'
-import SearchBar from './components/Header/SearchBar'
+import Header from './components/Header/Header'
 import Login from './Pages/Login/LoginPage'
 import Profile from './Pages/Profile/ProfilePage'
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { signIn } from './redux/AccountReducer'
 import firebase from '../src/api/accountApi'
 import SearchResult from './Pages/Main/components/SearchResult'
@@ -15,6 +15,7 @@ import SearchResult from './Pages/Main/components/SearchResult'
 const App = () => {
   const darkMode = useSelector((state) => state.filmReducer.darkMode)
   const dispatch = useDispatch()
+  
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
@@ -23,12 +24,10 @@ const App = () => {
     })
   }, [])
 
-
-  
   return (
     <div className={styles.app_wrapper} data-theme={darkMode ? 'dark' : 'light'}>
       <div>
-        <SearchBar />
+        <Header />
       </div>
       <Routes>
         <Route path='/' element={<Navigate to='/movies/popular' />} />

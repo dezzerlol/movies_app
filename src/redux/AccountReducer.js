@@ -1,10 +1,11 @@
 import { auth } from '../api/accountApi'
 import firebase from '../api/accountApi'
+import { SetUserFavsAndRatingsThunk } from './FilmReducer'
 
 const SIGN_IN = 'SIGN_IN'
 const SIGN_OUT = 'SIGN_OUT'
 const SET_FAVS = 'SET_FAVS'
-const SET_RATINGS ='SET_RATINGS'
+const SET_RATINGS = 'SET_RATINGS'
 
 let initialState = {
   user: null,
@@ -39,7 +40,7 @@ const AccountReducer = (state = initialState, action) => {
       }
     }
 
-    case SET_RATINGS:{
+    case SET_RATINGS: {
       return {
         ...state,
         ratings: action.ratings,
@@ -73,12 +74,12 @@ export const actions = {
     }
   },
 
-  setRatings(ratings){
-    return{
+  setRatings(ratings) {
+    return {
       type: SET_RATINGS,
-      ratings
+      ratings,
     }
-  }
+  },
 }
 
 //saving login data in store
@@ -110,8 +111,8 @@ export const getFavFilmsThunk = () => {
     let uid = getState().accountReducer.user.uid
     const favs = await firebase.firestore().collection('accounts').doc(uid).collection('favs').get()
     const docs = []
-    favs.forEach((doc) =>{
-      docs.push(doc.data());
+    favs.forEach((doc) => {
+      docs.push(doc.data())
     })
     dispatch(actions.setFavs(docs))
   }
@@ -121,7 +122,12 @@ export const getFavFilmsThunk = () => {
 export const findFavFilmThunk = (id) => {
   return async (dispatch, getState) => {
     let uid = getState().accountReducer.user.uid
-    const favs = await firebase.firestore().collection('accounts').doc(uid).collection('favs').get()
+    const Fav = await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(id).get()
+    const ratings = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(id).get()
+    
+    const isFav = Fav.data() == null ? false : true
+    const rating = ratings.data() == null ? null : ratings.data().rating
+    dispatch(SetUserFavsAndRatingsThunk(isFav, rating))
   }
 }
 
@@ -131,13 +137,12 @@ export const getRatingsThunk = () => {
     let uid = getState().accountReducer.user.uid
     const ratings = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').get()
     const docs = []
-    ratings.forEach((rating) =>{
-      docs.push(rating.data());
+    ratings.forEach((rating) => {
+      docs.push(rating.data())
     })
     dispatch(actions.setRatings(docs))
   }
 }
-
 
 //add film into fav
 export const addToFavThunk = (filmId, name) => {
@@ -151,7 +156,7 @@ export const addToFavThunk = (filmId, name) => {
     }
     if (loggedIn) {
       firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).set(favFilm)
-    } 
+    }
   }
 }
 
@@ -168,11 +173,8 @@ export const setRatingThunk = (filmId, name, rating) => {
     }
     if (loggedIn) {
       firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).set(favFilm)
-    } 
+    }
   }
 }
-
-
-
 
 export default AccountReducer

@@ -1,5 +1,5 @@
 import { IconButton, Popover, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import { useDispatch, useSelector } from 'react-redux'
 import { addToFavThunk } from '../../../redux/AccountReducer'
@@ -7,11 +7,16 @@ import { useParams } from 'react-router-dom'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 
 const FavButton = ({ filmItem, setOpenAlert }) => {
-  const userFav = useSelector((state) => state.filmReducer.filmItem.userFav)
+  const userFav = useSelector((state) => state.filmReducer.filmItem.userIsFav)
   const dispatch = useDispatch()
   const params = useParams()
   const [anchorEl, setAnchorEl] = useState(null)
-  const [fav, setFav] = useState(userFav)
+  const [fav, setFav] = useState()
+
+  useEffect(() => {
+    setFav(userFav)
+  }, [userFav])
+  
   const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget)
   }
@@ -25,12 +30,17 @@ const FavButton = ({ filmItem, setOpenAlert }) => {
     const id = params.id
     dispatch(addToFavThunk(id, name))
     setOpenAlert(true)
-
+    setFav(true)
     setTimeout(function () {
       setOpenAlert(false)
     }, 2000)
   }
 
+  if(userFav == null){
+    return ''
+  }
+ 
+  
   return (
     <>
       <IconButton onClick={addToFav} onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
@@ -54,7 +64,7 @@ const FavButton = ({ filmItem, setOpenAlert }) => {
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus>
-        <Typography sx={{ p: 1 }}>Add to favorites</Typography>
+        <Typography sx={{ p: 1 }}>{fav === false ? "Add to favorites" : "Remove from favorites"}</Typography>
       </Popover>
     </>
   )

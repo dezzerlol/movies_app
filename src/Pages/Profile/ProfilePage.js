@@ -15,6 +15,7 @@ const PageContainer = styled(Container)`
   align-items: center;
   min-height: 100vh;
   margin-top: 2rem;
+
   @media (min-width: 1000px) {
     flex-direction: row;
     align-items: flex-start;
@@ -30,8 +31,26 @@ const InfoCard = styled(Box)`
   margin-right: 1rem;
   padding: 1rem;
   border-radius: 10px;
-  min-width: 100px;
+  width: 110px;
+  text-align: center;
   cursor: pointer;
+`
+
+const CardBox = styled(Box)`
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`
+
+const Avatar = styled.img`
+  margin-bottom: 3rem;
+  width: 200px;
+
+  @media (min-width: 1000px) {
+    width: 300px;
+  }
 `
 
 const Profile = () => {
@@ -60,7 +79,7 @@ const Profile = () => {
         <Box>
           <Typography variant='h4'>{user.displayName}</Typography>
           <Box>
-            <img src={user.photoURL} alt='user pic' style={{ marginBottom: '3rem', width: '300px' }} />
+            <Avatar src={user.photoURL} alt='user pic' />
           </Box>
         </Box>
       ) : (
@@ -68,7 +87,7 @@ const Profile = () => {
       )}
 
       <Box>
-        <Box sx={{ display: 'flex', flexDirection: 'row', mb: '3rem' }}>
+        <CardBox>
           <InfoCard onClick={() => setSection('favorites')}>
             <Typography variant='h5'>{favs.length}</Typography>
             <Typography>Favorites</Typography>
@@ -85,7 +104,7 @@ const Profile = () => {
             <Typography variant='h5'>{Math.floor(ratings.reduce((accumulator, curValue) => accumulator + curValue.rating, 0) / ratings.length)}</Typography>
             <Typography>Average rating</Typography>
           </InfoCard>
-        </Box>
+        </CardBox>
         {section === 'favorites' ? <Favorites /> : section === 'ratings' ? <Ratings /> : section === 'watchlist' ? <WatchList /> : ''}
       </Box>
     </PageContainer>

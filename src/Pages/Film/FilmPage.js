@@ -1,15 +1,19 @@
 import styled from '@emotion/styled'
 import CheckIcon from '@mui/icons-material/Check'
-import { Alert, Avatar, Card, CardContent, Chip, Container, Divider, Fade, Grid, Rating, Typography } from '@mui/material'
+import { Alert, Chip, Container, Divider, Fade, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import Loader from '../../components/common/Loader'
+import { findFavFilmThunk } from '../../redux/AccountReducer'
 import { setFilmItemThunk } from '../../redux/FilmReducer'
 import FavButton from './components/FavButton'
+import FilmRating from './components/FilmRating'
+import PeopleCard from './components/PeopleCard'
+import ProductionCard from './components/ProductionCard'
 import RateButton from './components/RateButton'
-
+import Seasons from './components/Seasons'
 
 const PageContainer = styled(Container)`
   display: flex;
@@ -23,13 +27,6 @@ const PageContainer = styled(Container)`
     flex-direction: row;
     align-items: flex-start;
   }
-`
-
-const CardContainer = styled(Card)`
-  width: 260;
-  height: 110;
-  background-color: var(--container);
-  color: var(--color);
 `
 const PageBox = styled(Box)`
   width: 650;
@@ -65,9 +62,12 @@ const FilmPage = () => {
   const location = useLocation()
   const params = useParams()
   const filmItem = useSelector((state) => state.filmReducer.filmItem.item)
+  const userRating = useSelector((state) => state.filmReducer.filmItem.userRating)
   const cast = useSelector((state) => state.filmReducer.filmItem.cast)
   const crew = useSelector((state) => state.filmReducer.filmItem.crew)
+  const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
   const [openAlert, setOpenAlert] = useState(false)
+  const [rating, setUserRating] = useState(userRating)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -75,7 +75,15 @@ const FilmPage = () => {
     dispatch(setFilmItemThunk(type, params.id))
   }, [])
 
+  useEffect(() => {
+    if (loggedIn) {
+      dispatch(findFavFilmThunk(params.id))
+    }
+  }, [loggedIn])
 
+  useEffect(() => {
+    setUserRating(userRating)
+  }, [userRating])
 
   if (!filmItem) {
     return <Loader />
@@ -87,33 +95,6 @@ const FilmPage = () => {
     return hours + 'h ' + minutes + 'm '
   }
 
-  //crew/cast card output
-  const PeopleCard = (roleArr) => {
-    return (
-      <Grid container spacing={4}>
-        {roleArr.map((role) => (
-          <Grid item key={role.credit_id} xs={8} md={6}>
-            <CardContainer>
-              <CardContent sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Typography variant='h5'>{role.name}</Typography>
-                  <Avatar src={`https://image.tmdb.org/t/p/original/${role.profile_path}`} sx={{ width: 60, height: 60 }} alt='actor pic' />
-                </Box>
-                <Box>
-                  <Typography variant='caption' sx={{ color: 'var(--colorSecondary)' }}>
-                    {role.character ? role.character : role.job}
-                  </Typography>
-                </Box>
-              </CardContent>
-            </CardContainer>
-          </Grid>
-        ))}
-      </Grid>
-    )
-  }
-
- 
-
   return (
     <PageContainer>
       <Fade in={openAlert}>
@@ -123,9 +104,13 @@ const FilmPage = () => {
       </Fade>
       <PosterBox>
         <Image src={`https://image.tmdb.org/t/p/original/${filmItem.poster_path}`} alt='film poster' />
-        <FavButton filmItem={filmItem} setOpenAlert={setOpenAlert} />
-        <RateButton filmItem={filmItem}/>
-        
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <FavButton filmItem={filmItem} setOpenAlert={setOpenAlert} />
+          <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} />
+          <Typography variant='body' sx={{ color: 'var(--colorSecondary)' }}>
+            {rating}
+          </Typography>
+        </Box>
       </PosterBox>
 
       <PageBox>
@@ -150,87 +135,11 @@ const FilmPage = () => {
         </Box>
         <Typography variant='h6'>{filmItem.overview}</Typography>
 
-        <Box sx={{ mt: 6 }}>
-          <Typography component='legend' variant='h5'>
-            Rating: {filmItem.vote_average}
-          </Typography>
-          <Rating name='read-only' value={filmItem.vote_average} readOnly max={10} size='large' />
-        </Box>
-        <Divider sx={{ backgroundColor: 'var(--colorSecondary2)' }} />
+        <FilmRating vote_average={filmItem.vote_average}/>
+        
+        {filmItem.seasons && <Seasons seasons={filmItem.seasons} />}
 
-        {filmItem.seasons && (
-          <Box sx={{ mt: 6 }}>
-            <Typography component='legend' variant='h6'>
-              Seasons:
-            </Typography>
-            <Grid container spacing={1}>
-              {filmItem.seasons.map((season) => (
-                <Grid item key={season.name}>
-                  <Card sx={{ mb: 2, width: 300, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
-                    <CardContent sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <Box>
-                        <Box sx={{ mb: 1 }}>
-                          <Typography variant='h6'>{season.name}</Typography>
-                        </Box>
-                        <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
-                          <Typography variant='body2'>Out: {season.air_date}</Typography>
-                        </Box>
-                        <Box sx={{ mb: 1, color: 'var(--colorSecondary)' }}>
-                          <Typography variant='body2'>Episodes: {season.episode_count}</Typography>
-                        </Box>
-                      </Box>
-                      <Box>
-                        {season.poster_path ? (
-                          <img src={`https://image.tmdb.org/t/p/original/${season.poster_path}`} style={{ width: '120px' }} alt='company logo' />
-                        ) : null}
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Box>
-        )}
-
-        <Box sx={{ mt: 6 }}>
-          <Typography component='legend' variant='h6'>
-            Production:
-          </Typography>
-          {filmItem.budget && (
-            <Box sx={{ mb: 2 }}>
-              <Typography component='legend' variant='body2'>
-                <b>Budget:</b> {filmItem.budget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-              </Typography>
-              <Typography component='legend' variant='body2'>
-                <b>Revenue:</b> {filmItem.revenue.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}$
-              </Typography>
-            </Box>
-          )}
-          <Grid container spacing={1}>
-            {filmItem.production_companies.map((company) => (
-              <Grid item key={company.name}>
-                <Card sx={{ mb: 2, width: 300, height: 130, backgroundColor: 'var(--container)', color: 'var(--color)' }}>
-                  <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Box sx={{ mb: 1 }}>
-                      <Typography component='h6' variant='h6'>
-                        {company.name}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      {company.logo_path ? (
-                        <img
-                          src={`https://image.tmdb.org/t/p/original/${company.logo_path}`}
-                          style={{ maxWidth: '100px', maxHeight: '70px', objectFit: 'cover', height: 'auto', width: 'auto' }}
-                          alt='company logo'
-                        />
-                      ) : null}
-                    </Box>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        <ProductionCard companies={filmItem.production_companies} budget={filmItem.budget} />
 
         <Divider sx={{ backgroundColor: 'var(--colorSecondary2)' }} />
 
@@ -238,7 +147,7 @@ const FilmPage = () => {
           <Typography component='legend' variant='h5'>
             Cast:
           </Typography>
-          {PeopleCard(cast)}
+          <PeopleCard roleArr={cast} />
         </Box>
 
         {crew.length !== 0 && (
@@ -246,7 +155,7 @@ const FilmPage = () => {
             <Typography component='legend' variant='h5'>
               Crew:
             </Typography>
-            {PeopleCard(crew)}
+            <PeopleCard roleArr={crew} />
           </Box>
         )}
       </PageBox>

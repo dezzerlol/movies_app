@@ -7,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { NavLink } from 'react-router-dom'
 
 const CardContainer = styled(Card)`
-  margin: 1rem 0 1rem;
+  margin: 0 0 1rem;
   background-color: var(--container);
   color: var(--color);
   padding: 1rem;
@@ -20,6 +20,7 @@ const Link = styled(NavLink)`
   text-decoration: none;
   color: var(--color);
   cursor: pointer;
+  width: 150px;
 `
 
 const Ratings = () => {
@@ -27,7 +28,7 @@ const Ratings = () => {
 
   const ratingsOutput = ratings.map((rating) => (
     <CardContainer key={rating.id}>
-      <Link to={'/'}>{rating.name}</Link>
+      <Link to={`/movie/${ratings.id}`}>{rating.name}</Link>
       <Typography>{rating.rating}</Typography>
       <IconButton>
         <CloseIcon color='primary' />
@@ -37,7 +38,18 @@ const Ratings = () => {
 
   return (
     <Box>
-      <Typography variant='h4'>Your ratings:</Typography>
+      <Typography variant='h4'>Ratings:</Typography>
+      <Box sx={{display: 'flex', justifyContent: 'space-between', p: '0 2rem'}}>
+        <Typography variant='caption' sx={{ color: 'var(--colorSecondary)', width: '110px' }}>
+          Name
+        </Typography>
+        <Typography variant='caption' sx={{ color: 'var(--colorSecondary)' }}>
+          Score
+        </Typography>
+        <Typography variant='caption' sx={{ color: 'var(--colorSecondary)' }}>
+          
+        </Typography>
+      </Box>
       {ratingsOutput}
     </Box>
   )

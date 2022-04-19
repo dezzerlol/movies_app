@@ -9,8 +9,8 @@ import IconButton from '@mui/material/IconButton'
 import Popover from '@mui/material/Popover'
 import Slide from '@mui/material/Slide'
 import Typography from '@mui/material/Typography'
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { setRatingThunk } from '../../../redux/AccountReducer'
 
@@ -25,10 +25,11 @@ const CustomDialog = styled(Dialog)({
   backdropFilter: 'blur(3px)',
 })
 
-const RateButton = ({ filmItem }) => {
+const RateButton = ({ filmItem, userRating, setUserRating }) => {
+
   const [anchorEl, setAnchorEl] = useState(null)
   const [openDialog, setOpenDialog] = useState(false)
-  const [value, setValue] = React.useState(1)
+  const [value, setValue] = useState(userRating)
   const params = useParams()
   const dispatch = useDispatch()
   const open = Boolean(anchorEl)
@@ -49,12 +50,19 @@ const RateButton = ({ filmItem }) => {
     setOpenDialog(false)
   }
 
+  useEffect(() => {
+    setValue(userRating)
+  }, [userRating])
+  
+
   const setRating = (newValue) => {
     const id = params.id
     const name = filmItem.original_title ? filmItem.original_title : filmItem.original_name
     setValue(newValue)
+    setUserRating(newValue)
     dispatch(setRatingThunk(id, name, newValue))
   }
+
 
   return (
     <>
@@ -68,7 +76,7 @@ const RateButton = ({ filmItem }) => {
           <DialogContentText id='alert-dialog-slide-description'>
             <Rating
               name='customized-10'
-              defaultValue={null}
+
               max={10}
               value={value}
               onChange={(event, newValue) => {

@@ -1,13 +1,15 @@
 import { filmApi } from '../api/filmApi'
 import { auth } from '../api/accountApi'
 import firebase from '../api/accountApi'
+import { findFavFilmThunk } from './AccountReducer'
 
-const GET_FILMS = 'GET_FILMS'
-const GET_FILM_ITEM = 'GET_FILM_ITEM'
+const SET_FILMS = 'SET_FILMS'
+const SET_FILM_ITEM = 'SET_FILM_ITEM'
 const SEARCH_FILMS = 'SEARCH_FILMS'
 const SET_DARK_MODE = 'SET_DARK_MODE'
 const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
 const CLEAR_FILMS = 'CLEAR_FILMS'
+const SET_USER_FAVS_RATINGS = 'SET_USER_FAVS_RATINGS'
 
 let initialState = {
   films: [],
@@ -16,7 +18,7 @@ let initialState = {
     item: null,
     cast: null,
     crew: null,
-    userFav: false,
+    userIsFav: null,
     userRating: null,
   },
   searchResult: [],
@@ -25,7 +27,7 @@ let initialState = {
 
 const FilmReducer = (state = initialState, action) => {
   switch (action.type) {
-    case GET_FILMS:
+    case SET_FILMS:
       return {
         ...state,
         films: action.films,
@@ -37,15 +39,14 @@ const FilmReducer = (state = initialState, action) => {
         films: [],
         currentPage: 1,
       }
-    case GET_FILM_ITEM:
+    case SET_FILM_ITEM:
       return {
         ...state,
         filmItem: {
+          ...state.filmItem,
           item: action.filmItem,
           cast: action.cast,
           crew: action.crew,
-          userFav: action.userFav,
-          userRating: action.userRating
         },
       }
     case SEARCH_FILMS:
@@ -58,6 +59,16 @@ const FilmReducer = (state = initialState, action) => {
         ...state,
         currentPage: action.currentPage,
       }
+
+      case SET_USER_FAVS_RATINGS:
+        return{
+          ...state,
+          filmItem:{
+            ...state.filmItem,
+            userIsFav: action.userIsFav,
+            userRating: action.userRating
+          }
+        }
 
     case SET_DARK_MODE:
       return {
@@ -73,7 +84,7 @@ const FilmReducer = (state = initialState, action) => {
 export const actions = {
   setFilms(films) {
     return {
-      type: GET_FILMS,
+      type: SET_FILMS,
       films,
     }
   },
@@ -84,7 +95,7 @@ export const actions = {
 
   setFilmItem(filmItem, cast, crew) {
     return {
-      type: GET_FILM_ITEM,
+      type: SET_FILM_ITEM,
       filmItem,
       cast,
       crew,
@@ -101,6 +112,14 @@ export const actions = {
     return {
       type: SET_DARK_MODE,
       darkMode,
+    }
+  },
+
+  setUserFavsRatings(userIsFav, userRating){
+    return{
+      type: SET_USER_FAVS_RATINGS,
+      userIsFav,
+      userRating
     }
   },
 
@@ -169,15 +188,21 @@ export const setTopRatedTvShows = (currentPage) => {
 //get film item
 export const setFilmItemThunk = (type, filmId) => {
   return async (dispatch, getState) => {
-    //let uid = getState().accountReducer.user.uid
+   
     
     let resFilm = await filmApi.getFilmItem(type, filmId)
     let resActors = await filmApi.getActorsItem(type, filmId)
-    //let userFav = await firebase.firestore().collection('accounts').doc(uid).collection('favs').get()
+    
     let cast = resActors.data.cast.slice(0, 6)
     let crew = resActors.data.crew.slice(0, 6)
     dispatch(actions.setFilmItem(resFilm.data, cast, crew))
+    
+  }
+}
 
+export const SetUserFavsAndRatingsThunk = (userIsFav, userRating) => {
+  return (dispatch) =>{
+    dispatch(actions.setUserFavsRatings(userIsFav, userRating))
   }
 }
 
