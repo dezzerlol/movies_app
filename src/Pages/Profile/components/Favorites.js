@@ -1,9 +1,10 @@
 import styled from '@emotion/styled'
 import { Box, Card, IconButton, Typography } from '@mui/material'
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CloseIcon from '@mui/icons-material/Close'
 import { NavLink } from 'react-router-dom'
+import { removeFromFavThunk } from '../../../redux/AccountReducer'
 
 const CardContainer = styled(Card)`
   margin: 1rem 0 1rem;
@@ -22,12 +23,15 @@ const Link = styled(NavLink)`
 `
 
 const Favorites = () => {
+  const dispatch = useDispatch()
   const favs = useSelector((state) => state.accountReducer.favFilms)
-
+  const removeFromFav = (id) => {
+    dispatch(removeFromFavThunk(id, 'profile'))
+  }
   const favFilmsOutput = favs.map((film) => (
     <CardContainer key={film.id}>
       <Link to={`/movie/${film.id}`}>{film.name}</Link>
-      <IconButton>
+      <IconButton onClick={() => removeFromFav(film.id)}>
         <CloseIcon color='primary' />
       </IconButton>
     </CardContainer>
@@ -36,7 +40,13 @@ const Favorites = () => {
   return (
     <Box>
       <Typography variant='h4'>Your favorite films:</Typography>
-      {favFilmsOutput}
+      {favFilmsOutput.length === 0 ? (
+        <Typography variant='h6' color={'var(--colorSecondary)'}>
+          You havent added films to your favorite list yet.
+        </Typography>
+      ) : (
+        favFilmsOutput
+      )}
     </Box>
   )
 }

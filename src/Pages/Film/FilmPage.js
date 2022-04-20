@@ -1,6 +1,5 @@
 import styled from '@emotion/styled'
-import CheckIcon from '@mui/icons-material/Check'
-import { Alert, Chip, Container, Divider, Fade, Typography } from '@mui/material'
+import { Chip, Container, Divider, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -14,6 +13,7 @@ import PeopleCard from './components/PeopleCard'
 import ProductionCard from './components/ProductionCard'
 import RateButton from './components/RateButton'
 import Seasons from './components/Seasons'
+import WatchLaterButton from './components/WatchLaterButton'
 
 const PageContainer = styled(Container)`
   display: flex;
@@ -66,7 +66,7 @@ const FilmPage = () => {
   const cast = useSelector((state) => state.filmReducer.filmItem.cast)
   const crew = useSelector((state) => state.filmReducer.filmItem.crew)
   const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
-  const [openAlert, setOpenAlert] = useState(false)
+
   const [rating, setUserRating] = useState(userRating)
 
   useEffect(() => {
@@ -97,19 +97,17 @@ const FilmPage = () => {
 
   return (
     <PageContainer>
-      <Fade in={openAlert}>
-        <Alert icon={<CheckIcon fontSize='inherit' />} severity='success' variant='filled' sx={{ position: 'absolute', left: 5, bottom: 15 }}>
-          Added {filmItem.original_title ? filmItem.original_title : filmItem.original_name} to your favorites
-        </Alert>
-      </Fade>
       <PosterBox>
         <Image src={`https://image.tmdb.org/t/p/original/${filmItem.poster_path}`} alt='film poster' />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <FavButton filmItem={filmItem} setOpenAlert={setOpenAlert} />
+          <FavButton filmItem={filmItem} />
+          <WatchLaterButton filmItem={filmItem} />
           <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} />
+          
           <Typography variant='body' sx={{ color: 'var(--colorSecondary)' }}>
             {rating}
           </Typography>
+          
         </Box>
       </PosterBox>
 
@@ -135,8 +133,8 @@ const FilmPage = () => {
         </Box>
         <Typography variant='h6'>{filmItem.overview}</Typography>
 
-        <FilmRating vote_average={filmItem.vote_average}/>
-        
+        <FilmRating vote_average={filmItem.vote_average} />
+
         {filmItem.seasons && <Seasons seasons={filmItem.seasons} />}
 
         <ProductionCard companies={filmItem.production_companies} budget={filmItem.budget} />

@@ -27,14 +27,18 @@ const FilmItem = (props) => {
         <Card
           className={'filmItemImg'}
           sx={{
-            maxWidth: 230,
-            maxHeight: 480,
+            width: 230,
+
             height: 480,
             color: 'var(--color)',
             backgroundColor: 'var(--container)',
           }}>
           <CardActionArea onClick={() => props.onClickHandle(props.id)}>
-            <CardMedia component='img' image={props.poster ? `https://image.tmdb.org/t/p/w780/${props.poster}` : defaultPic} height='350' alt='film poster' />
+            <CardMedia 
+            component='img' 
+            image={props.poster ? `https://image.tmdb.org/t/p/w780/${props.poster}` : defaultPic} 
+            height='350' 
+            alt='film poster' />
           </CardActionArea>
 
           <CardContent>

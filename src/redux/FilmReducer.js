@@ -1,15 +1,13 @@
 import { filmApi } from '../api/filmApi'
-import { auth } from '../api/accountApi'
-import firebase from '../api/accountApi'
-import { findFavFilmThunk } from './AccountReducer'
 
 const SET_FILMS = 'SET_FILMS'
 const SET_FILM_ITEM = 'SET_FILM_ITEM'
 const SEARCH_FILMS = 'SEARCH_FILMS'
-const SET_DARK_MODE = 'SET_DARK_MODE'
 const SET_CURRENT_PAGE = 'SET_CURRENT_PAGE'
 const CLEAR_FILMS = 'CLEAR_FILMS'
-const SET_USER_FAVS_RATINGS = 'SET_USER_FAVS_RATINGS'
+const SET_USER_FAV = 'SET_USER_FAV'
+const SET_USER_WATCHLIST = 'SET_USER_WATCHLIST'
+const SET_USER_RATING = 'SET_USER_RATING'
 
 let initialState = {
   films: [],
@@ -19,10 +17,10 @@ let initialState = {
     cast: null,
     crew: null,
     userIsFav: null,
+    userWatchList: null,
     userRating: null,
   },
   searchResult: [],
-  darkMode: JSON.parse(localStorage.getItem('darkMode')),
 }
 
 const FilmReducer = (state = initialState, action) => {
@@ -60,21 +58,35 @@ const FilmReducer = (state = initialState, action) => {
         currentPage: action.currentPage,
       }
 
-      case SET_USER_FAVS_RATINGS:
-        return{
-          ...state,
-          filmItem:{
-            ...state.filmItem,
-            userIsFav: action.userIsFav,
-            userRating: action.userRating
-          }
-        }
-
-    case SET_DARK_MODE:
+    case SET_USER_FAV: {
       return {
         ...state,
-        darkMode: action.darkMode,
+        filmItem: {
+          ...state.filmItem,
+          userIsFav: action.userIsFav,
+        },
       }
+    }
+
+    case SET_USER_RATING: {
+      return {
+        ...state,
+        filmItem: {
+          ...state.filmItem,
+          userRating: action.userRating,
+        },
+      }
+    }
+
+    case SET_USER_WATCHLIST: {
+      return {
+        ...state,
+        filmItem: {
+          ...state.filmItem,
+          userWatchListL: action.userWatchList,
+        },
+      }
+    }
 
     default:
       return state
@@ -108,25 +120,29 @@ export const actions = {
     }
   },
 
-  setDarkMode(darkMode) {
-    return {
-      type: SET_DARK_MODE,
-      darkMode,
-    }
-  },
-
-  setUserFavsRatings(userIsFav, userRating){
-    return{
-      type: SET_USER_FAVS_RATINGS,
-      userIsFav,
-      userRating
-    }
-  },
-
   setCurrentPage(currentPage) {
     return {
       type: SET_CURRENT_PAGE,
       currentPage,
+    }
+  },
+  setFavs(userIsFav) {
+    return {
+      type: SET_USER_FAV,
+      userIsFav,
+    }
+  },
+  setRating(userRating) {
+    return {
+      type: SET_USER_RATING,
+      userRating,
+    }
+  },
+
+  setUserWatchList(userWatchList) {
+    return {
+      type: SET_USER_WATCHLIST,
+      userWatchList,
     }
   },
 }
@@ -188,21 +204,26 @@ export const setTopRatedTvShows = (currentPage) => {
 //get film item
 export const setFilmItemThunk = (type, filmId) => {
   return async (dispatch, getState) => {
-   
-    
     let resFilm = await filmApi.getFilmItem(type, filmId)
     let resActors = await filmApi.getActorsItem(type, filmId)
-    
+
     let cast = resActors.data.cast.slice(0, 6)
     let crew = resActors.data.crew.slice(0, 6)
     dispatch(actions.setFilmItem(resFilm.data, cast, crew))
-    
   }
 }
 
-export const SetUserFavsAndRatingsThunk = (userIsFav, userRating) => {
-  return (dispatch) =>{
-    dispatch(actions.setUserFavsRatings(userIsFav, userRating))
+//set fav film
+export const setIsFav = (userIsFav) => {
+  return (dispatch) => {
+    dispatch(actions.setFavs(userIsFav))
+  }
+}
+
+//set film rating
+export const setRating = (userRating) => {
+  return (dispatch) => {
+    dispatch(actions.setRating(userRating))
   }
 }
 
@@ -210,13 +231,6 @@ export const searchFilmThunk = (term) => {
   return async (dispatch) => {
     let res = await filmApi.searchForFilm(term)
     dispatch(actions.setSearchResults(res.data.results))
-  }
-}
-
-export const setDarkModeThunk = (darkMode) => {
-  return async (dispatch) => {
-    dispatch(actions.setDarkMode(darkMode))
-    localStorage.setItem('darkMode', darkMode)
   }
 }
 

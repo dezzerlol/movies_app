@@ -1,3 +1,4 @@
+import { CircularProgress } from '@mui/material'
 import React from 'react'
 
 export const Loader = () => {
@@ -13,7 +14,7 @@ export const Loader = () => {
         zIndex: '9999',
         backgroundColor: 'var(--background)',
       }}>
-      <img style={{ width: '80px', height: '60px' }} src='https://betall.ru/local/img/25_1.gif' alt='loader' />
+      <CircularProgress />
     </div>
   )
 }

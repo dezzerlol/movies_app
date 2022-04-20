@@ -12,8 +12,9 @@ import { useNavigate } from 'react-router-dom'
 import ThemeSwitch from './ThemeSwitch'
 import LoginIcon from '@mui/icons-material/Login'
 import { auth } from '../../api/accountApi'
-import {signOut } from '../../redux/AccountReducer'
+import { signOut } from '../../redux/AccountReducer'
 import { useState } from 'react'
+import { Skeleton } from '@mui/material'
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -36,6 +37,10 @@ const AccountMenu = () => {
     navigate('/')
   }
 
+  if (!user) {
+    return <Skeleton variant='circular' width={40} height={40} sx={{ mr: '3rem' }} />
+  }
+
   return (
     <>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', mr: '3rem' }}>
@@ -47,7 +52,13 @@ const AccountMenu = () => {
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup='true'
             aria-expanded={open ? 'true' : undefined}>
-            {user ? <Avatar sx={{ width: 32, height: 32 }} src={user.photoURL}></Avatar> : <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>}
+            {user ? (
+              <Avatar sx={{ width: 32, height: 32 }} src={user.photoURL} alt='user photo'></Avatar>
+            ) : (
+              <Avatar sx={{ width: 32, height: 32 }} alt='user photo'>
+                M
+              </Avatar>
+            )}
           </IconButton>
         </Tooltip>
       </Box>

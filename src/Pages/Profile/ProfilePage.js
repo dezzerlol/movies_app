@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Box, Container, getCardActionAreaUtilityClass, Typography } from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../../components/common/Loader'
@@ -101,7 +101,9 @@ const Profile = () => {
             <Typography>On watch list</Typography>
           </InfoCard>
           <InfoCard onClick={() => setSection('avgrating')}>
-            <Typography variant='h5'>{Math.floor(ratings.reduce((accumulator, curValue) => accumulator + curValue.rating, 0) / ratings.length)}</Typography>
+            <Typography variant='h5'>
+              {ratings.length === 0 ? '0' : Math.floor(ratings.reduce((accumulator, curValue) => accumulator + curValue.rating, 0) / ratings.length)}
+            </Typography>
             <Typography>Average rating</Typography>
           </InfoCard>
         </CardBox>

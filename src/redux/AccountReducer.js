@@ -1,11 +1,12 @@
 import { auth } from '../api/accountApi'
 import firebase from '../api/accountApi'
-import { SetUserFavsAndRatingsThunk } from './FilmReducer'
+import { setIsFav, setRating } from './FilmReducer'
 
 const SIGN_IN = 'SIGN_IN'
 const SIGN_OUT = 'SIGN_OUT'
 const SET_FAVS = 'SET_FAVS'
 const SET_RATINGS = 'SET_RATINGS'
+const SET_DARK_MODE = 'SET_DARK_MODE'
 
 let initialState = {
   user: null,
@@ -13,6 +14,7 @@ let initialState = {
   favFilms: null,
   ratings: null,
   watchlist: null,
+  darkMode: JSON.parse(localStorage.getItem('darkMode')),
 }
 
 const AccountReducer = (state = initialState, action) => {
@@ -47,6 +49,12 @@ const AccountReducer = (state = initialState, action) => {
       }
     }
 
+    case SET_DARK_MODE:
+      return {
+        ...state,
+        darkMode: action.darkMode,
+      }
+
     default: {
       return state
     }
@@ -78,6 +86,13 @@ export const actions = {
     return {
       type: SET_RATINGS,
       ratings,
+    }
+  },
+
+  setDarkMode(darkMode) {
+    return {
+      type: SET_DARK_MODE,
+      darkMode,
     }
   },
 }
@@ -124,10 +139,11 @@ export const findFavFilmThunk = (id) => {
     let uid = getState().accountReducer.user.uid
     const Fav = await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(id).get()
     const ratings = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(id).get()
-    
+
     const isFav = Fav.data() == null ? false : true
-    const rating = ratings.data() == null ? null : ratings.data().rating
-    dispatch(SetUserFavsAndRatingsThunk(isFav, rating))
+    const rating = ratings.data() == null ? false : ratings.data().rating
+    dispatch(setIsFav(isFav))
+    dispatch(setRating(rating))
   }
 }
 
@@ -149,13 +165,59 @@ export const addToFavThunk = (filmId, name) => {
   return async (dispatch, getState) => {
     let loggedIn = getState().accountReducer.loggedIn
     let uid = getState().accountReducer.user.uid
-    console.log(loggedIn)
     const favFilm = {
       id: filmId,
       name: name,
     }
     if (loggedIn) {
-      firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).set(favFilm)
+      await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).set(favFilm)
+      dispatch(setIsFav(true))
+    }
+  }
+}
+
+//remove film from fav
+export const removeFromFavThunk = (filmId, page) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
+
+    if (loggedIn) {
+      if (page === 'film') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).delete()
+        dispatch(setIsFav(false))
+      } else if (page === 'profile') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).delete()
+        const favs = await firebase.firestore().collection('accounts').doc(uid).collection('favs').get()
+        const docs = []
+        favs.forEach((doc) => {
+          docs.push(doc.data())
+        })
+        dispatch(actions.setFavs(docs))
+      }
+    }
+  }
+}
+
+//remove film rating
+export const removeRatingThunk = (filmId, page) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
+
+    if (loggedIn) {
+      if (page === 'film') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).delete()
+        dispatch(setRating(false))
+      } else if (page === 'profile') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).delete()
+        const favs = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').get()
+        const docs = []
+        favs.forEach((doc) => {
+          docs.push(doc.data())
+        })
+        dispatch(actions.setRatings(docs))
+      }
     }
   }
 }
@@ -165,15 +227,22 @@ export const setRatingThunk = (filmId, name, rating) => {
   return async (dispatch, getState) => {
     let loggedIn = getState().accountReducer.loggedIn
     let uid = getState().accountReducer.user.uid
-    console.log(loggedIn)
     const favFilm = {
       id: filmId,
       name: name,
       rating: rating,
     }
     if (loggedIn) {
-      firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).set(favFilm)
+      await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).set(favFilm)
+      dispatch(setRating(rating))
     }
+  }
+}
+
+export const setDarkModeThunk = (darkMode) => {
+  return async (dispatch) => {
+    dispatch(actions.setDarkMode(darkMode))
+    localStorage.setItem('darkMode', darkMode)
   }
 }
 

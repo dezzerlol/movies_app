@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { styled } from '@mui/system'
 import { useSwitch } from '@mui/base/SwitchUnstyled'
 import { useDispatch, useSelector } from 'react-redux'
-import { setDarkModeThunk } from '../../redux/FilmReducer'
+import { setDarkModeThunk } from '../../redux/AccountReducer'
 
 const blue = {
   700: '#0059B2',
@@ -84,7 +84,7 @@ const SwitchTrack = styled('span')(
 
 function MUISwitch(props) {
   const dispatch = useDispatch()
-  const darkMode = useSelector((state) => state.filmReducer.darkMode)
+  const darkMode = useSelector((state) => state.accountReducer.darkMode)
 
   const [checked, setChecked] = useState(darkMode)
   const { getInputProps, disabled, focusVisible } = useSwitch(props)

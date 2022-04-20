@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
-import GradeIcon from '@mui/icons-material/Grade'
-import { Rating } from '@mui/material'
+import StarIcon from '@mui/icons-material/Star'
+import StarBorderIcon from '@mui/icons-material/StarBorder'
+import { Rating, Skeleton } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
@@ -10,7 +11,7 @@ import Popover from '@mui/material/Popover'
 import Slide from '@mui/material/Slide'
 import Typography from '@mui/material/Typography'
 import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { setRatingThunk } from '../../../redux/AccountReducer'
 
@@ -26,7 +27,6 @@ const CustomDialog = styled(Dialog)({
 })
 
 const RateButton = ({ filmItem, userRating, setUserRating }) => {
-
   const [anchorEl, setAnchorEl] = useState(null)
   const [openDialog, setOpenDialog] = useState(false)
   const [value, setValue] = useState(userRating)
@@ -53,7 +53,10 @@ const RateButton = ({ filmItem, userRating, setUserRating }) => {
   useEffect(() => {
     setValue(userRating)
   }, [userRating])
-  
+
+  if (userRating === null) {
+    return <Skeleton width={40} height={40} />
+  }
 
   const setRating = (newValue) => {
     const id = params.id
@@ -63,11 +66,10 @@ const RateButton = ({ filmItem, userRating, setUserRating }) => {
     dispatch(setRatingThunk(id, name, newValue))
   }
 
-
   return (
     <>
       <IconButton onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} onClick={handleClickOpen}>
-        <GradeIcon sx={{ color: 'var(--colorSecondary)' }} />
+        {value !== false ? <StarIcon sx={{ color: 'var(--colorSecondary)' }} /> : <StarBorderIcon sx={{ color: 'var(--colorSecondary)' }} />}
       </IconButton>
 
       <CustomDialog open={openDialog} TransitionComponent={Transition} keepMounted onClose={handleClose} aria-describedby='alert-dialog-slide-description'>
@@ -76,7 +78,6 @@ const RateButton = ({ filmItem, userRating, setUserRating }) => {
           <DialogContentText id='alert-dialog-slide-description'>
             <Rating
               name='customized-10'
-
               max={10}
               value={value}
               onChange={(event, newValue) => {
@@ -105,7 +106,7 @@ const RateButton = ({ filmItem, userRating, setUserRating }) => {
         }}
         onClose={handlePopoverClose}
         disableRestoreFocus>
-        <Typography sx={{ p: 1 }}>Rate</Typography>
+        <Typography sx={{ p: 1 }}>{value !== false ? 'Change your rating' : 'Rate'}</Typography>
       </Popover>
     </>
   )
