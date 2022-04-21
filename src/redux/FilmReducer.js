@@ -8,7 +8,7 @@ const CLEAR_FILMS = 'CLEAR_FILMS'
 const SET_USER_FAV = 'SET_USER_FAV'
 const SET_USER_WATCHLIST = 'SET_USER_WATCHLIST'
 const SET_USER_RATING = 'SET_USER_RATING'
-
+const CLEAR_FILM_ITEM = 'CLEAR_FILM_ITEM'
 let initialState = {
   films: [],
   currentPage: 1,
@@ -25,19 +25,23 @@ let initialState = {
 
 const FilmReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SET_FILMS:
+    case SET_FILMS: {
       return {
         ...state,
         films: action.films,
       }
-
-    case CLEAR_FILMS:
+    }
+    case CLEAR_FILMS: {
       return {
         ...state,
         films: [],
         currentPage: 1,
       }
-    case SET_FILM_ITEM:
+    }
+    case CLEAR_FILM_ITEM: {
+      return { ...state, filmItem: {} }
+    }
+    case SET_FILM_ITEM: {
       return {
         ...state,
         filmItem: {
@@ -47,17 +51,19 @@ const FilmReducer = (state = initialState, action) => {
           crew: action.crew,
         },
       }
-    case SEARCH_FILMS:
+    }
+    case SEARCH_FILMS: {
       return {
         ...state,
         searchResult: action.searchResult,
       }
-    case SET_CURRENT_PAGE:
+    }
+    case SET_CURRENT_PAGE: {
       return {
         ...state,
         currentPage: action.currentPage,
       }
-
+    }
     case SET_USER_FAV: {
       return {
         ...state,
@@ -67,7 +73,6 @@ const FilmReducer = (state = initialState, action) => {
         },
       }
     }
-
     case SET_USER_RATING: {
       return {
         ...state,
@@ -77,7 +82,6 @@ const FilmReducer = (state = initialState, action) => {
         },
       }
     }
-
     case SET_USER_WATCHLIST: {
       return {
         ...state,
@@ -103,6 +107,9 @@ export const actions = {
 
   clearFilms() {
     return { type: CLEAR_FILMS }
+  },
+  clearFilmItem() {
+    return { type: CLEAR_FILM_ITEM }
   },
 
   setFilmItem(filmItem, cast, crew) {

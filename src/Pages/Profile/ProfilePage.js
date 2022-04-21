@@ -7,6 +7,7 @@ import { getFavFilmsThunk, getRatingsThunk } from '../../redux/AccountReducer'
 import Favorites from './components/Favorites'
 import Ratings from './components/Ratings'
 import WatchList from './components/WatchList'
+import defaultAvatar from '../../images/defaultavatar.jpg'
 
 const PageContainer = styled(Container)`
   display: flex;
@@ -69,6 +70,7 @@ const Profile = () => {
     }
   }, [user])
 
+  
   if (!favs || !ratings) {
     return <Loader />
   }
@@ -77,9 +79,9 @@ const Profile = () => {
     <PageContainer>
       {user ? (
         <Box>
-          <Typography variant='h4'>{user.displayName}</Typography>
+          <Typography variant='h4'>{user.displayName ? user.displayName : user.email}</Typography>
           <Box>
-            <Avatar src={user.photoURL} alt='user pic' />
+            <Avatar src={user.photoURL ? user.photoURL : defaultAvatar} alt='user pic' />
           </Box>
         </Box>
       ) : (

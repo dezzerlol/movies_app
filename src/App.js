@@ -5,7 +5,7 @@ import ScrollToTop from './components/common/ScrollToTop'
 import FilmPage from './Pages/Film/FilmPage'
 //import MainPage from './Pages/Main/MainPage'
 import Header from './components/Header/Header'
-import Login from './Pages/Login/LoginPage'
+import LoginPage from './Pages/Login/LoginPage'
 import Profile from './Pages/Profile/ProfilePage'
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import { signIn } from './redux/AccountReducer'
 import firebase from '../src/api/accountApi'
 import SearchResult from './Pages/Main/components/SearchResult'
 import Loader from './components/common/Loader'
+import SignUpPage from './Pages/Login/SignUpPage'
 const MainPage = React.lazy(() => import('./Pages/Main/MainPage'))
 const App = () => {
   const darkMode = useSelector((state) => state.accountReducer.darkMode)
@@ -33,8 +34,8 @@ const App = () => {
       </div>
       <Routes>
         <Route path='/' element={<Navigate to='/movies/popular' />} />
-        <Route path='/login' element={<Login />} />
-
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/signup' element={<SignUpPage />} />
         <Route path='/movies'>
           <Route
             path='popular'

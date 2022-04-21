@@ -4,6 +4,10 @@ import { setIsFav, setRating } from './FilmReducer'
 
 const SIGN_IN = 'SIGN_IN'
 const SIGN_OUT = 'SIGN_OUT'
+const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
+const REGISTER_FAIL = 'REGISTER_FAIL'
+const SET_MESSAGE = 'SET_MESSAGE'
+const CLEAR_MESSAGE = 'CLEAR_MESSAGE'
 const SET_FAVS = 'SET_FAVS'
 const SET_RATINGS = 'SET_RATINGS'
 const SET_DARK_MODE = 'SET_DARK_MODE'
@@ -26,35 +30,58 @@ const AccountReducer = (state = initialState, action) => {
         loggedIn: true,
       }
     }
-
     case SIGN_OUT: {
       return {
         ...state,
         user: null,
         loggedIn: false,
+        favFilms: null,
+        ratings: null,
+        watchlist: null,
       }
     }
-
+    case SET_MESSAGE: {
+      return {
+        ...state,
+        message: action.message,
+      }
+    }
+    case CLEAR_MESSAGE: {
+      return {
+        ...state,
+        message: '',
+      }
+    }
+    case REGISTER_SUCCESS: {
+      return {
+        ...state,
+        errorCode: 1,
+      }
+    }
+    case REGISTER_FAIL: {
+      return {
+        ...state,
+        errorCode: 2,
+      }
+    }
     case SET_FAVS: {
       return {
         ...state,
         favFilms: action.favs,
       }
     }
-
     case SET_RATINGS: {
       return {
         ...state,
         ratings: action.ratings,
       }
     }
-
-    case SET_DARK_MODE:
+    case SET_DARK_MODE: {
       return {
         ...state,
         darkMode: action.darkMode,
       }
-
+    }
     default: {
       return state
     }
@@ -72,6 +99,30 @@ export const actions = {
   signOut() {
     return {
       type: SIGN_OUT,
+    }
+  },
+
+  setMessage(message) {
+    return {
+      type: SET_MESSAGE,
+      message,
+    }
+  },
+
+  setSignupSuccess() {
+    return {
+      type: REGISTER_SUCCESS,
+    }
+  },
+  setSignupFail() {
+    return {
+      type: REGISTER_FAIL,
+    }
+  },
+
+  clearMessage() {
+    return {
+      type: CLEAR_MESSAGE,
     }
   },
 
@@ -107,16 +158,51 @@ export const signIn = (user) => {
 //removing login data from store
 export const signOut = () => {
   return async (dispatch) => {
+    await auth.signOut()
     dispatch(actions.signOut())
   }
 }
 
-//logging into account
-export const signInThunk = (account) => {
+//sign in with google account
+export const signInGoogleThunk = (account) => {
   return async (dispatch) => {
     const provider = new firebase.auth.GoogleAuthProvider()
     const { user } = await auth.signInWithPopup(provider)
     dispatch(actions.signIn(user))
+  }
+}
+
+//register email account
+export const signUpEmailThunk = (email, password) => {
+  return async (dispatch) => {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    await auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((response) => {
+        dispatch(actions.setSignupSuccess())
+        dispatch(actions.setMessage(`Successfully created account with email ${email}`))
+      })
+      .catch((error) => {
+        dispatch(actions.setSignupFail())
+        dispatch(actions.setMessage(error.message))
+      })
+    dispatch(signOut())
+  }
+}
+
+//sign in with email account
+export const signInEmailThunk = (email, password) => {
+  return async (dispatch) => {
+    const provider = new firebase.auth.GoogleAuthProvider()
+    await auth
+      .signInWithEmailAndPassword(email, password)
+      .then((response) => {
+        dispatch(actions.signIn(response.user))
+      })
+      .catch((error) => {
+        dispatch(actions.setSignupFail())
+        dispatch(actions.setMessage(error.message))
+      })
   }
 }
 

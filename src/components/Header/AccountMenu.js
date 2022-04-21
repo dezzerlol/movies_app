@@ -11,10 +11,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import ThemeSwitch from './ThemeSwitch'
 import LoginIcon from '@mui/icons-material/Login'
-import { auth } from '../../api/accountApi'
+import defaultAvatar from '../../images/defaultavatar.jpg'
 import { signOut } from '../../redux/AccountReducer'
 import { useState } from 'react'
-import { Skeleton } from '@mui/material'
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState(null)
@@ -32,13 +31,8 @@ const AccountMenu = () => {
   }
 
   const signOutHandle = () => {
-    auth.signOut()
     dispatch(signOut())
     navigate('/')
-  }
-
-  if (!user) {
-    return <Skeleton variant='circular' width={40} height={40} sx={{ mr: '3rem' }} />
   }
 
   return (
@@ -53,7 +47,7 @@ const AccountMenu = () => {
             aria-haspopup='true'
             aria-expanded={open ? 'true' : undefined}>
             {user ? (
-              <Avatar sx={{ width: 32, height: 32 }} src={user.photoURL} alt='user photo'></Avatar>
+              <Avatar sx={{ width: 32, height: 32 }} src={user.photoURL ? user.photoURL : defaultAvatar} alt='user photo'></Avatar>
             ) : (
               <Avatar sx={{ width: 32, height: 32 }} alt='user photo'>
                 M
@@ -104,7 +98,7 @@ const AccountMenu = () => {
             <ListItemIcon>
               <LoginIcon fontSize='small' />
             </ListItemIcon>
-            Sign up
+            Sign in
           </MenuItem>
         )}
 
