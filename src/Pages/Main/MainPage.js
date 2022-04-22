@@ -68,7 +68,7 @@ const Films = () => {
 
 
   return (
-    <Container sx={{ mt: '2rem', height: '100vh' }}>
+    <Container sx={{ mt: '2rem', height: '100%' }}>
       <FilmSearchField />
       <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
         <Typography variant='h4' sx={{ color: 'var(--color)', fontFamily: 'Roboto' }}>

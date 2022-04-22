@@ -9,6 +9,7 @@ import CheckIcon from '@mui/icons-material/Check'
 
 const FavButton = ({ filmItem }) => {
   const userFav = useSelector((state) => state.filmReducer.filmItem.userIsFav)
+  const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
   const dispatch = useDispatch()
   const params = useParams()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -46,6 +47,9 @@ const FavButton = ({ filmItem }) => {
     setTimeout(function () {
       setOpenAlert(false)
     }, 2000)
+  }
+  if (loggedIn === false) {
+    return ''
   }
 
   if (userFav == null) {

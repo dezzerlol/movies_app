@@ -17,8 +17,9 @@ let initialState = {
     cast: null,
     crew: null,
     userIsFav: null,
-    userWatchList: null,
+    userWatchlist: null,
     userRating: null,
+    userReview: null,
   },
   searchResult: [],
 }
@@ -79,6 +80,7 @@ const FilmReducer = (state = initialState, action) => {
         filmItem: {
           ...state.filmItem,
           userRating: action.userRating,
+          userReview: action.userReview,
         },
       }
     }
@@ -87,7 +89,7 @@ const FilmReducer = (state = initialState, action) => {
         ...state,
         filmItem: {
           ...state.filmItem,
-          userWatchListL: action.userWatchList,
+          userWatchlist: action.userWatchlist,
         },
       }
     }
@@ -139,17 +141,18 @@ export const actions = {
       userIsFav,
     }
   },
-  setRating(userRating) {
+  setRating(userRating, userReview) {
     return {
       type: SET_USER_RATING,
       userRating,
+      userReview,
     }
   },
 
-  setUserWatchList(userWatchList) {
+  setUserWatchList(userWatchlist) {
     return {
       type: SET_USER_WATCHLIST,
-      userWatchList,
+      userWatchlist,
     }
   },
 }
@@ -227,10 +230,17 @@ export const setIsFav = (userIsFav) => {
   }
 }
 
-//set film rating
-export const setRating = (userRating) => {
+//set watchlist
+export const setIsWatchlist = (userIsWatchlist) => {
   return (dispatch) => {
-    dispatch(actions.setRating(userRating))
+    dispatch(actions.setUserWatchList(userIsWatchlist))
+  }
+}
+
+//set film rating
+export const setRating = (userRating, userReview) => {
+  return (dispatch) => {
+    dispatch(actions.setRating(userRating, userReview))
   }
 }
 

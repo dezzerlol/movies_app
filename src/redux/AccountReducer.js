@@ -1,6 +1,8 @@
 import { auth } from '../api/accountApi'
 import firebase from '../api/accountApi'
-import { setIsFav, setRating } from './FilmReducer'
+import { setIsFav, setIsWatchlist, setRating } from './FilmReducer'
+import { getAuth, updateProfile } from 'firebase/auth'
+import { getStorage, ref, uploadBytes, Storage, getDownloadURL } from 'firebase/storage'
 
 const SIGN_IN = 'SIGN_IN'
 const SIGN_OUT = 'SIGN_OUT'
@@ -10,6 +12,7 @@ const SET_MESSAGE = 'SET_MESSAGE'
 const CLEAR_MESSAGE = 'CLEAR_MESSAGE'
 const SET_FAVS = 'SET_FAVS'
 const SET_RATINGS = 'SET_RATINGS'
+const SET_WATCHLIST = 'SET_WATCHLIST'
 const SET_DARK_MODE = 'SET_DARK_MODE'
 
 let initialState = {
@@ -70,6 +73,12 @@ const AccountReducer = (state = initialState, action) => {
         favFilms: action.favs,
       }
     }
+    case SET_WATCHLIST: {
+      return {
+        ...state,
+        watchlist: action.watchlist,
+      }
+    }
     case SET_RATINGS: {
       return {
         ...state,
@@ -95,20 +104,11 @@ export const actions = {
       user,
     }
   },
-
   signOut() {
     return {
       type: SIGN_OUT,
     }
   },
-
-  setMessage(message) {
-    return {
-      type: SET_MESSAGE,
-      message,
-    }
-  },
-
   setSignupSuccess() {
     return {
       type: REGISTER_SUCCESS,
@@ -119,7 +119,12 @@ export const actions = {
       type: REGISTER_FAIL,
     }
   },
-
+  setMessage(message) {
+    return {
+      type: SET_MESSAGE,
+      message,
+    }
+  },
   clearMessage() {
     return {
       type: CLEAR_MESSAGE,
@@ -132,11 +137,16 @@ export const actions = {
       favs,
     }
   },
-
   setRatings(ratings) {
     return {
       type: SET_RATINGS,
       ratings,
+    }
+  },
+  setWatchlist(watchlist) {
+    return {
+      type: SET_WATCHLIST,
+      watchlist,
     }
   },
 
@@ -154,7 +164,6 @@ export const signIn = (user) => {
     dispatch(actions.signIn(user))
   }
 }
-
 //removing login data from store
 export const signOut = () => {
   return async (dispatch) => {
@@ -171,11 +180,23 @@ export const signInGoogleThunk = (account) => {
     dispatch(actions.signIn(user))
   }
 }
-
+//sign in with email account
+export const signInEmailThunk = (email, password) => {
+  return async (dispatch) => {
+    await auth
+      .signInWithEmailAndPassword(email, password)
+      .then((response) => {
+        dispatch(actions.signIn(response.user))
+      })
+      .catch((error) => {
+        dispatch(actions.setSignupFail())
+        dispatch(actions.setMessage(error.message))
+      })
+  }
+}
 //register email account
 export const signUpEmailThunk = (email, password) => {
   return async (dispatch) => {
-    const provider = new firebase.auth.GoogleAuthProvider()
     await auth
       .createUserWithEmailAndPassword(email, password)
       .then((response) => {
@@ -187,22 +208,6 @@ export const signUpEmailThunk = (email, password) => {
         dispatch(actions.setMessage(error.message))
       })
     dispatch(signOut())
-  }
-}
-
-//sign in with email account
-export const signInEmailThunk = (email, password) => {
-  return async (dispatch) => {
-    const provider = new firebase.auth.GoogleAuthProvider()
-    await auth
-      .signInWithEmailAndPassword(email, password)
-      .then((response) => {
-        dispatch(actions.signIn(response.user))
-      })
-      .catch((error) => {
-        dispatch(actions.setSignupFail())
-        dispatch(actions.setMessage(error.message))
-      })
   }
 }
 
@@ -218,21 +223,18 @@ export const getFavFilmsThunk = () => {
     dispatch(actions.setFavs(docs))
   }
 }
-
-//find fav films from user
-export const findFavFilmThunk = (id) => {
+//getting all watchlist films for account
+export const getWatchlistItemsThunk = () => {
   return async (dispatch, getState) => {
     let uid = getState().accountReducer.user.uid
-    const Fav = await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(id).get()
-    const ratings = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(id).get()
-
-    const isFav = Fav.data() == null ? false : true
-    const rating = ratings.data() == null ? false : ratings.data().rating
-    dispatch(setIsFav(isFav))
-    dispatch(setRating(rating))
+    const favs = await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').get()
+    const docs = []
+    favs.forEach((doc) => {
+      docs.push(doc.data())
+    })
+    dispatch(actions.setWatchlist(docs))
   }
 }
-
 //getting all ratings for account
 export const getRatingsThunk = () => {
   return async (dispatch, getState) => {
@@ -246,19 +248,21 @@ export const getRatingsThunk = () => {
   }
 }
 
-//add film into fav
-export const addToFavThunk = (filmId, name) => {
+//find film item rating, fav, watchlist
+export const getFilmItemUserStats = (id) => {
   return async (dispatch, getState) => {
-    let loggedIn = getState().accountReducer.loggedIn
     let uid = getState().accountReducer.user.uid
-    const favFilm = {
-      id: filmId,
-      name: name,
-    }
-    if (loggedIn) {
-      await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).set(favFilm)
-      dispatch(setIsFav(true))
-    }
+    const Fav = await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(id).get()
+    const ratings = await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(id).get()
+    const watchlist = await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').doc(id).get()
+
+    const isFav = Fav.data() == null ? false : true
+    const isWatchlist = watchlist.data() == null ? false : true
+    const rating = ratings.data() == null ? false : ratings.data().rating
+    const review = ratings.data() == null ? false : ratings.data().review
+    dispatch(setIsFav(isFav))
+    dispatch(setRating(rating, review))
+    dispatch(setIsWatchlist(isWatchlist))
   }
 }
 
@@ -284,7 +288,6 @@ export const removeFromFavThunk = (filmId, page) => {
     }
   }
 }
-
 //remove film rating
 export const removeRatingThunk = (filmId, page) => {
   return async (dispatch, getState) => {
@@ -307,9 +310,61 @@ export const removeRatingThunk = (filmId, page) => {
     }
   }
 }
+//remove film from watchlist
+export const removeFromWatchlistThunk = (filmId, page) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
 
+    if (loggedIn) {
+      if (page === 'film') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').doc(filmId).delete()
+        dispatch(setIsWatchlist(false))
+      } else if (page === 'profile') {
+        await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').doc(filmId).delete()
+        const favs = await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').get()
+        const docs = []
+        favs.forEach((doc) => {
+          docs.push(doc.data())
+        })
+        dispatch(actions.setWatchlist(docs))
+      }
+    }
+  }
+}
+
+//add film into fav
+export const addToFavThunk = (filmId, name) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
+    const favFilm = {
+      id: filmId,
+      name: name,
+    }
+    if (loggedIn) {
+      await firebase.firestore().collection('accounts').doc(uid).collection('favs').doc(filmId).set(favFilm)
+      dispatch(setIsFav(true))
+    }
+  }
+}
+//add film into watchlist
+export const addToWatchlistThunk = (filmId, name) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
+    const favFilm = {
+      id: filmId,
+      name: name,
+    }
+    if (loggedIn) {
+      await firebase.firestore().collection('accounts').doc(uid).collection('watchlist').doc(filmId).set(favFilm)
+      dispatch(setIsWatchlist(true))
+    }
+  }
+}
 //set film rating
-export const setRatingThunk = (filmId, name, rating) => {
+export const setRatingThunk = (filmId, name, rating, review) => {
   return async (dispatch, getState) => {
     let loggedIn = getState().accountReducer.loggedIn
     let uid = getState().accountReducer.user.uid
@@ -317,11 +372,54 @@ export const setRatingThunk = (filmId, name, rating) => {
       id: filmId,
       name: name,
       rating: rating,
+      review: review,
     }
     if (loggedIn) {
       await firebase.firestore().collection('accounts').doc(uid).collection('ratings').doc(filmId).set(favFilm)
       dispatch(setRating(rating))
     }
+  }
+}
+
+//set username
+export const setUsernameThunk = (name) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    const auth = getAuth()
+
+    if (loggedIn) {
+      await updateProfile(auth.currentUser, { displayName: name })
+        .then((response) => {
+          dispatch(actions.setSignupSuccess())
+          dispatch(actions.setMessage(`Successfully updated name`))
+        })
+        .catch((error) => {
+          dispatch(actions.setSignupFail())
+          dispatch(actions.setMessage(error.message))
+        })
+    }
+  }
+}
+
+//set user avatar
+export const setAvatarThunk = (photo) => {
+  return async (dispatch, getState) => {
+    let loggedIn = getState().accountReducer.loggedIn
+    let uid = getState().accountReducer.user.uid
+    const auth = getAuth()
+    const storage = getStorage()
+    let storageRef = ref(storage, `photos/${uid}`)
+    await uploadBytes(storageRef, photo)
+    const url = await getDownloadURL(storageRef)
+    updateProfile(auth.currentUser, { photoURL: url })
+      .then((response) => {
+        dispatch(actions.setSignupSuccess())
+        dispatch(actions.setMessage(`Successfully updated avatar`))
+      })
+      .catch((error) => {
+        dispatch(actions.setSignupFail())
+        dispatch(actions.setMessage(error.message))
+      })
   }
 }
 

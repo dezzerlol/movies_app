@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { Box, Card, IconButton, Typography } from '@mui/material'
+import { Box, Card, CardContent, Divider, IconButton, Typography } from '@mui/material'
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -11,10 +11,6 @@ const CardContainer = styled(Card)`
   margin: 0 0 1rem;
   background-color: var(--container);
   color: var(--color);
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `
 
 const Link = styled(NavLink)`
@@ -22,6 +18,7 @@ const Link = styled(NavLink)`
   color: var(--color);
   cursor: pointer;
   width: 150px;
+  font-family: 'Roboto';
 `
 
 const Ratings = () => {
@@ -34,11 +31,23 @@ const Ratings = () => {
 
   const ratingsOutput = ratings.map((rating) => (
     <CardContainer key={rating.id}>
-      <Link to={`/movie/${ratings.id}`}>{rating.name}</Link>
-      <Typography>{rating.rating}</Typography>
-      <IconButton onClick={() => removeRating(rating.id)}>
-        <CloseIcon color='primary' />
-      </IconButton>
+      <CardContent sx={{ p: '0.5rem' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link to={`/movie/${ratings.id}`}>{rating.name}</Link>
+          <Typography variant='h6' sx={{ fontFamily: 'Roboto' }}>
+            {rating.rating}
+          </Typography>
+          <IconButton onClick={() => removeRating(rating.id)}>
+            <CloseIcon color='primary' />
+          </IconButton>
+        </Box>
+        <Divider sx={{ backgroundColor: 'var(--colorSecondary)' }} />
+        <Box>
+          <Typography variant='subtitle2' color={'var(--colorSecondary)'}>
+            Review: {rating.review ? rating.review : '-'}
+          </Typography>
+        </Box>
+      </CardContent>
     </CardContainer>
   ))
 
@@ -46,7 +55,9 @@ const Ratings = () => {
     <Box>
       <Typography variant='h4'>Ratings:</Typography>
       {ratingsOutput.length === 0 ? (
-        <Typography variant='h6' color={'var(--colorSecondary)'}>You havent rated films yet.</Typography>
+        <Typography variant='h6' color={'var(--colorSecondary)'}>
+          You havent rated films yet.
+        </Typography>
       ) : (
         <>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', p: '0 2rem' }}>

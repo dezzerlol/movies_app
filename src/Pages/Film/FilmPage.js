@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import Loader from '../../components/common/Loader'
-import { findFavFilmThunk } from '../../redux/AccountReducer'
+import { getFilmItemUserStats } from '../../redux/AccountReducer'
 import { setFilmItemThunk } from '../../redux/FilmReducer'
 import FavButton from './components/FavButton'
 import FilmRating from './components/FilmRating'
@@ -63,6 +63,7 @@ const FilmPage = () => {
   const params = useParams()
   const filmItem = useSelector((state) => state.filmReducer.filmItem.item)
   const userRating = useSelector((state) => state.filmReducer.filmItem.userRating)
+  const userReview = useSelector((state) => state.filmReducer.filmItem.userReview)
   const cast = useSelector((state) => state.filmReducer.filmItem.cast)
   const crew = useSelector((state) => state.filmReducer.filmItem.crew)
   const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
@@ -77,7 +78,7 @@ const FilmPage = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      dispatch(findFavFilmThunk(params.id))
+      dispatch(getFilmItemUserStats(params.id))
     }
   }, [loggedIn])
 
@@ -102,12 +103,11 @@ const FilmPage = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <FavButton filmItem={filmItem} />
           <WatchLaterButton filmItem={filmItem} />
-          <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} />
-          
+          <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} userReview={userReview}/>
+
           <Typography variant='body' sx={{ color: 'var(--colorSecondary)' }}>
             {rating}
           </Typography>
-          
         </Box>
       </PosterBox>
 

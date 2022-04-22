@@ -30,12 +30,16 @@ const FilmSearchField = () => {
           id='term'
           type='text'
           onChange={formik.handleChange}
-          label='Search'
           variant='outlined'
           fullWidth
           focused
-          sx={{ mb: '1.5rem', mr: 1, input: { color: 'white' } }}
+          placeholder='Search...'
+          sx={{ mb: '1.5rem', mr: 1 }}
           InputProps={{
+            style: {
+              color: 'var(--color)',
+              fontSize: 20,
+            },
             startAdornment: (
               <InputAdornment position='start'>
                 <SearchIcon sx={{ color: '#F83646' }} />
