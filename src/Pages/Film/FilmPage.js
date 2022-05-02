@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { matchPath, useLocation, useParams } from 'react-router-dom'
 import Loader from '../../components/common/Loader'
 import { getFilmItemUserStats } from '../../redux/AccountReducer'
-import { setFilmItemThunk } from '../../redux/FilmReducer'
+import { removeFilmItemThunk, setFilmItemThunk } from '../../redux/FilmReducer'
 import FavButton from './components/FavButton'
 import FilmRating from './components/FilmRating'
 import PeopleCard from './components/PeopleCard'
@@ -74,6 +74,10 @@ const FilmPage = () => {
     window.scrollTo(0, 0)
     let type = matchPath('/movie/*', location.pathname) ? 'movie' : 'tv'
     dispatch(setFilmItemThunk(type, params.id))
+
+    return () => {
+      dispatch(removeFilmItemThunk())
+    }
   }, [])
 
   useEffect(() => {
@@ -103,7 +107,7 @@ const FilmPage = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <FavButton filmItem={filmItem} />
           <WatchLaterButton filmItem={filmItem} />
-          <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} userReview={userReview}/>
+          <RateButton filmItem={filmItem} setUserRating={setUserRating} userRating={userRating} userReview={userReview} />
 
           <Typography variant='body' sx={{ color: 'var(--colorSecondary)' }}>
             {rating}

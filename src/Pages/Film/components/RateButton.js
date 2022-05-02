@@ -4,7 +4,6 @@ import StarBorderIcon from '@mui/icons-material/StarBorder'
 import { Button, DialogActions, Rating, Skeleton, TextField } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
-import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 import Popover from '@mui/material/Popover'
@@ -76,7 +75,7 @@ const RateButton = ({ filmItem, userRating, setUserRating, userReview }) => {
     return <Skeleton width={40} height={40} />
   }
 
-  console.log(filmItem)
+ 
   return (
     <>
       <IconButton onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose} onClick={handleClickOpen}>

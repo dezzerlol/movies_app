@@ -2,11 +2,11 @@ import { auth } from '../api/accountApi'
 import firebase from '../api/accountApi'
 import { setIsFav, setIsWatchlist, setRating } from './FilmReducer'
 import { getAuth, updateProfile } from 'firebase/auth'
-import { getStorage, ref, uploadBytes, Storage, getDownloadURL } from 'firebase/storage'
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 const SIGN_IN = 'SIGN_IN'
 const SIGN_OUT = 'SIGN_OUT'
-const REGISTER_SUCCESS = 'REGISTER_SUCCESS'
+const SET_LOADING = 'SET_LOADING'
 const REGISTER_FAIL = 'REGISTER_FAIL'
 const SET_MESSAGE = 'SET_MESSAGE'
 const CLEAR_MESSAGE = 'CLEAR_MESSAGE'
@@ -18,6 +18,7 @@ const SET_DARK_MODE = 'SET_DARK_MODE'
 let initialState = {
   user: null,
   loggedIn: false,
+  isLoading: false,
   favFilms: null,
   ratings: null,
   watchlist: null,
@@ -43,6 +44,12 @@ const AccountReducer = (state = initialState, action) => {
         watchlist: null,
       }
     }
+    case SET_LOADING: {
+      return {
+        ...state,
+        isLoading: action.isLoading,
+      }
+    }
     case SET_MESSAGE: {
       return {
         ...state,
@@ -55,16 +62,10 @@ const AccountReducer = (state = initialState, action) => {
         message: '',
       }
     }
-    case REGISTER_SUCCESS: {
-      return {
-        ...state,
-        errorCode: 1,
-      }
-    }
     case REGISTER_FAIL: {
       return {
         ...state,
-        errorCode: 2,
+        isFail: action.isFail
       }
     }
     case SET_FAVS: {
@@ -109,14 +110,16 @@ export const actions = {
       type: SIGN_OUT,
     }
   },
-  setSignupSuccess() {
+  setLoading(isLoading) {
     return {
-      type: REGISTER_SUCCESS,
+      type: SET_LOADING,
+      isLoading,
     }
   },
-  setSignupFail() {
+  setSignupFail(isFail) {
     return {
       type: REGISTER_FAIL,
+      isFail
     }
   },
   setMessage(message) {
@@ -175,38 +178,46 @@ export const signOut = () => {
 //sign in with google account
 export const signInGoogleThunk = (account) => {
   return async (dispatch) => {
+    dispatch(actions.setLoading(true))
     const provider = new firebase.auth.GoogleAuthProvider()
     const { user } = await auth.signInWithPopup(provider)
     dispatch(actions.signIn(user))
+    dispatch(actions.setLoading(false))
   }
 }
 //sign in with email account
 export const signInEmailThunk = (email, password) => {
   return async (dispatch) => {
+    dispatch(actions.setLoading(true))
     await auth
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
         dispatch(actions.signIn(response.user))
+        dispatch(actions.setSignupFail(false))
+        dispatch(actions.setMessage(null))
       })
       .catch((error) => {
-        dispatch(actions.setSignupFail())
+        dispatch(actions.setSignupFail(true))
         dispatch(actions.setMessage(error.message))
       })
+      dispatch(actions.setLoading(false))
   }
 }
 //register email account
 export const signUpEmailThunk = (email, password) => {
   return async (dispatch) => {
+    dispatch(actions.setLoading(true))
     await auth
       .createUserWithEmailAndPassword(email, password)
       .then((response) => {
-        dispatch(actions.setSignupSuccess())
+        dispatch(actions.setSignupFail(false))
         dispatch(actions.setMessage(`Successfully created account with email ${email}`))
       })
       .catch((error) => {
-        dispatch(actions.setSignupFail())
+        dispatch(actions.setSignupFail(true))
         dispatch(actions.setMessage(error.message))
       })
+    dispatch(actions.setLoading(false))
     dispatch(signOut())
   }
 }
@@ -404,7 +415,6 @@ export const setUsernameThunk = (name) => {
 //set user avatar
 export const setAvatarThunk = (photo) => {
   return async (dispatch, getState) => {
-    let loggedIn = getState().accountReducer.loggedIn
     let uid = getState().accountReducer.user.uid
     const auth = getAuth()
     const storage = getStorage()

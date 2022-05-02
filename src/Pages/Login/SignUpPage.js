@@ -8,8 +8,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { signUpEmailThunk } from '../../redux/AccountReducer'
 import { object, ref, string } from 'yup'
 
+
 const SignupContainer = styled(Container)`
-  min-height:100vh;
+  min-height: 100vh;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -61,17 +62,15 @@ const LoginSchema = object().shape({
 
 const SignUpPage = () => {
   const message = useSelector((state) => state.accountReducer.message)
-  const errorCode = useSelector((state) => state.accountReducer.errorCode)
+  const isFail = useSelector((state) => state.accountReducer.isFail)
   const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
   const user = useSelector((state) => state.accountReducer.user)
+  const isLoading = useSelector((state) => state.accountReducer.isLoading)
   const dispatch = useDispatch()
   const navigate = useNavigate()
- 
-
 
   const formik = useFormik({
     initialValues: {
-      login: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -84,9 +83,10 @@ const SignUpPage = () => {
   })
   useEffect(() => {
     if (loggedIn) {
-      navigate(`/profile/${user.uid}`)
+      navigate(`/profile/${user.uid}`, { replace: true })
     }
   }, [])
+
 
   return (
     <SignupContainer>
@@ -98,33 +98,12 @@ const SignUpPage = () => {
       </Typography>
       <form onSubmit={formik.handleSubmit} style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <Box width={'300px'}>
-          {/* <CustomTextField
-            id='login'
-            label='Login'
-            name='username'
-            required
-            autoComplete='name'
-            onChange={formik.handleChange}
-            variant='outlined'
-            sx={{ mb: '1rem' }}
-            fullWidth
-            InputLabelProps={{
-              style: {
-                color: 'var(--colorSecondary)',
-              },
-            }}
-            InputProps={{
-              style: {
-                color: 'var(--color)',
-              },
-            }}
-          /> */}
           <CustomTextField
             id='email'
             label='Email'
             name='email'
             autoComplete='email'
-            onChange={formik.handleChange}
+            onBlur={formik.handleChange}
             variant='outlined'
             helperText={formik.errors.email && formik.touched.email && `${formik.errors.email}`}
             error={formik.errors.email && formik.touched.email}
@@ -145,7 +124,7 @@ const SignUpPage = () => {
             id='password'
             label='Password'
             name='password'
-            onChange={formik.handleChange}
+            onBlur={formik.handleChange}
             variant='outlined'
             type='password'
             sx={{ mb: '1rem' }}
@@ -168,7 +147,7 @@ const SignUpPage = () => {
             label='Confirm password'
             name='confirmPassword'
             type='password'
-            onChange={formik.handleChange}
+            onBlur={formik.handleChange}
             variant='outlined'
             helperText={formik.errors.confirmPassword && formik.touched.confirmPassword && `${formik.errors.confirmPassword}`}
             error={formik.errors.confirmPassword && formik.touched.confirmPassword}
@@ -186,13 +165,13 @@ const SignUpPage = () => {
             }}
           />
         </Box>
-        <Button variant='outlined' type='submit'>
+        <Button variant='outlined' type='submit' disabled={isLoading}>
           Sign up
         </Button>
         <Typography variant='caption' sx={{ color: 'var(--color)', fontFamily: 'Roboto', mt: '1rem' }}>
           Already have an account? <Link to='/login'>Sign-In</Link>
         </Typography>
-        {message && <Alert severity={errorCode === 1 ? 'success' : 'error'}>{message}</Alert>}
+        {message && <Alert severity={isFail === false ? 'success' : 'error'}>{message}</Alert>}
       </form>
     </SignupContainer>
   )

@@ -211,7 +211,7 @@ export const setTopRatedTvShows = (currentPage) => {
   }
 }
 
-//get film item
+//set film item
 export const setFilmItemThunk = (type, filmId) => {
   return async (dispatch, getState) => {
     let resFilm = await filmApi.getFilmItem(type, filmId)
@@ -222,6 +222,15 @@ export const setFilmItemThunk = (type, filmId) => {
     dispatch(actions.setFilmItem(resFilm.data, cast, crew))
   }
 }
+
+//set film item
+export const removeFilmItemThunk = () => {
+  return async (dispatch, getState) => {
+    dispatch(actions.clearFilmItem())
+  }
+}
+
+
 
 //set fav film
 export const setIsFav = (userIsFav) => {

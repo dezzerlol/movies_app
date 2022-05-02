@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
-import { Avatar, Button, Container, TextField, Typography } from '@mui/material'
+import { Alert, Avatar, Button, Container, TextField, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 import { useFormik } from 'formik'
 import React, { useEffect } from 'react'
@@ -48,6 +48,9 @@ const LoginSchema = object().shape({
 const Login = () => {
   const loggedIn = useSelector((state) => state.accountReducer.loggedIn)
   const user = useSelector((state) => state.accountReducer.user)
+  const isLoading = useSelector((state) => state.accountReducer.isLoading)
+  const message = useSelector((state) => state.accountReducer.message)
+  const isFail = useSelector((state) => state.accountReducer.isFail)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const formik = useFormik({
@@ -67,7 +70,7 @@ const Login = () => {
 
   useEffect(() => {
     if (loggedIn) {
-      navigate(`/profile/${user.uid}`)
+      navigate(`/profile/${user.uid}`, { replace: true })
     }
   }, [loggedIn])
 
@@ -130,14 +133,15 @@ const Login = () => {
           <Button variant='outlined' onClick={() => navigate('/signup')}>
             Sign up
           </Button>
-          <Button variant='outlined' type='submit'>
+          <Button variant='outlined' type='submit' disabled={isLoading}>
             Login
           </Button>
         </Box>
       </form>
-      <Button variant='outlined' onClick={googleLoginHandle}>
+      <Button variant='outlined' onClick={googleLoginHandle} disabled={isLoading} sx={{mb: '1rem'}}>
         Sign in with google
       </Button>
+      {message && <Alert severity={isFail === false ? 'success' : 'error'}>{message}</Alert>}
     </LoginContainer>
   )
 }
