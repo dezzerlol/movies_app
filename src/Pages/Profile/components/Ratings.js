@@ -33,7 +33,7 @@ const Ratings = () => {
     <CardContainer key={rating.id}>
       <CardContent sx={{ p: '0.5rem' }}>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link to={`/movie/${ratings.id}`}>{rating.name}</Link>
+          <Link to={`/movie/${rating.id}`}>{rating.name}</Link>
           <Typography variant='h6' sx={{ fontFamily: 'Roboto' }}>
             {rating.rating}
           </Typography>
